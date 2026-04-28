@@ -15,13 +15,13 @@ print(t)
 
 (*a,b) = ("python","java","php","android")
 
-print(a)
+print(a)  
 print(b)
 
-print(t*2)
+print(t*2) #ye operator se tuple ke sare element 2 times print hote hai
 
-# del t
-# print(t)
+del t
+print(t)
 
 k = [10]
 print(type(k))

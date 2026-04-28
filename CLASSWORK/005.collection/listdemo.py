@@ -4,13 +4,15 @@ print(type(l))
 print(len(l))
 print(l[0])
 
-# access list item :
-l = [10,20,30,40,50,60]
+# access list item :  
+l = [10,20,30,40,50,60]   
 print(l[1])
-print(l[1:5])
-print(l[-1])
-print(l[-4:-1])
-print(l[::-1])
+print(l[1:5])      #ye index se list ke element access karte hai starting index se end index tak but end index ke element ko include nahi karte hai
+print(l[::2])        #ye operator se list ke element ko step ke according access
+print(l[-1])        #ye negative index se list ke element access karte hai starting index se end index tak but end index ke element ko include nahi karte hai   
+print(l[-4:-1])      #ye negative index se list ke element access karte hai starting index se end index tak but end index ke element ko include nahi karte hai
+print(l[::2])        #ye operator se list ke element ko step ke according access karte hai but step ke according element ko include karte hai
+print(l[::-1])      #ye operator se list ke element ko reverse order me access karte hai
 
 change list
 
@@ -71,18 +73,18 @@ print(k)
 
 
 s = ["python","java","php","android","react"]
-s.sort()
-s.sort(reverse=True)
-s.reverse()
+s.sort()                 #ye method se list ko sort karte hai
+s.sort(reverse=True)   #ye method se list ko reverse order me sort karte hai
+s.reverse()           #ye method se list ko reverse karte hai
 
 k = sorted(s)
 print(k)
 
 k = s
-k = s.copy()
+k = s.copy()        #ye method se list ko copy karte hai but ye list ko copy karne ke baad bhi original list me changes karne par copied list me bhi changes aate hai
 k = list(s)
 k = s[:]
 
-k.append(5000)
+k.append(5000)      #ye method se list me element add karte hai but ye method se list me element add karne ke baad bhi original list me changes karne par copied list me bhi changes aate hai
 print(k)
 print(s)
