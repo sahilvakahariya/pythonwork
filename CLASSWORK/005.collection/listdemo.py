@@ -35,7 +35,7 @@ print(a)
 remove
 
 l = [10,20,30,40,50,60]
-# l.remove(2)
+l.remove(2)
 l.pop(2)
 
 l.clear()

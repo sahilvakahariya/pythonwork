@@ -22,7 +22,7 @@ cn={
 "china": "Ch",
 "germany": "Ge"
 }
-# print(cn)
+print(cn)
 print(cn["india"])  #ye method se dictionary ke value access karte hai key ke through but agar key dictionary me nahi hai to error aata hai
 print(cn.get("india1"))  #ye method se dictionary ke value access karte hai key ke through but agar key dictionary me nahi hai to None return karta hai
 
@@ -69,7 +69,7 @@ student={
 "marks":{"python":90,"java":80,"php":70,"android":60,"react":50}
 }
 
-# for i,j in student ["marks"].items():
+for i,j in student ["marks"].items():
 student ["marks"]["python"] = 95
 print(student)
 
