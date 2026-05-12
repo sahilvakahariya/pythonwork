@@ -1,0 +1,131 @@
+What is a List in Python?
+Answer: A list is a collection of items stored in one variable. It is ordered, mutable, and allows duplicate values.
+
+
+How do you create a List in Python?
+Answer: Lists are created using square brackets [].
+Example:
+Python
+my_list = [1, 2, 3]
+
+
+What is the difference between List and Tuple?
+Answer:
+List is mutable (can change).
+Tuple is immutable (cannot change).
+
+
+What are append() and extend() methods in List?
+Answer:
+append() adds one element at the end of the list.
+extend() adds multiple elements to the list.
+Example:
+Python
+my_list.append(4)
+my_list.extend([5, 6])
+
+
+How do you remove elements from a List in Python?
+Answer: We can use remove(), pop(), or del.
+Example:
+Python
+my_list.remove(2)
+
+
+
+What is a module in Python?
+A module is a file that contains Python code like functions, classes, and variables. It helps reuse code.
+
+
+How do you import a module in Python?
+We use the import keyword.
+Example:
+Python
+import math
+
+
+What is the difference between a module and a package?
+Module = single Python file
+Package = collection of modules inside a folder
+
+
+How can you import only one function from a module?
+Example:
+Python
+from math import sqrt
+
+
+What are some built-in Python modules?
+Examples:
+math
+random
+os
+datetime
+sys
+
+
+
+
+What is file handling in Python?
+File handling is used to create, read, write, and update files in Python.
+
+
+How do you open a file in Python?
+We use the open() function.
+Example:
+Python
+file = open("data.txt", "r")
+
+
+What are the different file modes in Python?
+"r" → Read
+"w" → Write
+"a" → Append
+"x" → Create file
+
+
+How do you read data from a file?
+Example:
+Python
+file = open("data.txt", "r")
+print(file.read())
+
+
+Why is close() important in file handling?
+close() is used to close the file after use and save system memory.
+Example:
+Python
+file.close()
+
+
+What are operators in Python?
+Operators are special symbols used to perform operations on variables and values.
+
+
+What are the types of operators in Python?
+Arithmetic Operators
+Comparison Operators
+Logical Operators
+Assignment Operators
+Bitwise Operators
+
+
+What are arithmetic operators?
+Arithmetic operators are used for mathematical calculations.
+Examples:
+Python
++  -  *  /  %
+
+
+What is the difference between = and ==?
+= → Assignment operator
+== → Comparison operator
+
+
+What are logical operators in Python?
+Logical operators are used to combine conditions.
+Examples:
+Python
+and
+or
+not

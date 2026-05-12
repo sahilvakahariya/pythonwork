@@ -35,4 +35,4 @@ print(st[:5])
 print(st[2:5])
 print(st[-5:-1])
 print(st[1:9:2])
-print(st[::-1])
+print(st[::-1])6
