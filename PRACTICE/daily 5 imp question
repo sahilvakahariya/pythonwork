@@ -129,3 +129,65 @@ Python
 and
 or
 not
+
+
+1. What is Exception Handling in Python?
+Answer: Exception handling is used to handle errors in a program so it does not stop unexpectedly.
+
+Example:
+
+try:
+    print(10/0)
+except:
+    print("Error occurred")
+
+
+
+2. What is the use of try and except block?
+Answer:
+
+try → contains code that may cause an error.
+except → handles the error.
+
+Example:
+
+try:
+    num = int("abc")
+except ValueError:
+    print("Invalid input")
+
+
+
+
+3. What is the use of finally block?
+Answer: finally block always executes whether an exception occurs or not.
+
+Example:
+
+try:
+    print(10/2)
+finally:
+    print("Done")
+
+
+
+4. What is the use of raise keyword?
+Answer: raise is used to create and throw an exception manually.
+
+Example:
+
+age = -1
+if age < 0:
+    raise ValueError("Age cannot be negative")
+
+
+5. What is the difference between Syntax Error and Exception?
+Answer:
+
+Syntax Error: Error in program writing rules.
+Exception: Error occurs during program execution.
+
+Example:
+
+print("Hello"   # Syntax Error
+print(10/0)     # Exception
