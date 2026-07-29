@@ -1,0 +1,8 @@
+<h2>All User Profiles</h2>
+<ul>
+    {% for profile in profiles %}
+        <li>{{ profile.username }} — Age: {{ profile.age }}</li>
+    {% empty %}
+        <li>No profiles found.</li>
+    {% endfor %}
+</ul>

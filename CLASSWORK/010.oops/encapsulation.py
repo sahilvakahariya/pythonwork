@@ -1,4 +1,5 @@
-
+#wrapping data and method into single unit(class) is called encapsulation.
+#encapsulation is achieved by using private members.
 class student:
     __id=25
     __name="sahil"

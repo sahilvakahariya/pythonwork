@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body{
+            background: linear-gradient(135deg,#4facfe,#00f2fe);
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:40px;
+        }
+
+        .card{
+            border:none;
+            border-radius:20px;
+            box-shadow:0 15px 35px rgba(0,0,0,.2);
+        }
+
+        .card-header{
+            background:#0d6efd;
+            color:white;
+            border-radius:20px 20px 0 0 !important;
+            text-align:center;
+            font-size:28px;
+            font-weight:bold;
+            padding:20px;
+        }
+
+        label{
+            font-weight:600;
+        }
+
+        .btn-success{
+            width:100%;
+            font-size:18px;
+            border-radius:10px;
+        }
+
+        textarea{
+            resize:none;
+        }
+
+        .form-control:focus,
+        .form-select:focus{
+            box-shadow:0 0 10px rgba(13,110,253,.3);
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card">
+
+                <div class="card-header">
+                    🎓 Student Registration
+                </div>
+
+                <div class="card-body p-4">
+
+                    <span class="text-success">{{message}}</span>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label>Name</label>
+                                <input type="text" class="form-control" name="name" placeholder="Enter Name" value="{{student.name}}">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Email</label>
+                                <input type="email" class="form-control" name="email" placeholder="Enter Email" value="{{student.email}}">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Password</label>
+                                <input type="password" class="form-control" name="password" placeholder="Enter Password" value="{{student.password}}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label d-block">Gender</label>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" value="Male" {%if student.gender == 'Male' %}checked{%endif%}>
+                                    <label class="form-check-label">Male</label>
+                                </div>
+
+                               <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" value="Female" {%if student.gender == 'Female'%}checked{%endif%}>
+                                    <label class="form-check-label">Female</label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" value="Other" {%if student.gender == 'Other' %}checked{%endif%}>
+                                    <label class="form-check-label">Other</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Language</label>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="lang" value="Gujarati"
+                                        {%if 'Gujarati' in student.lang %}checked{%endif%}>
+                                    <label class="form-check-label">Gujarati</label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="lang" value="Hindi"
+                                        {%if 'Hindi' in student.lang %}checked{%endif%}>
+                                    <label class="form-check-label">Hindi</label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="lang" value="English"
+                                        {%if 'English' in student.lang %}checked{%endif%}>
+                                    <label class="form-check-label">English</label>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Country</label>
+ <select class="form-select" name="country">
+                                    <option selected disabled>Select Country</option>
+                                    <option {%if student.country == 'India' %}selected{%endif%}>India</option>
+                                    <option {%if student.country == 'USA' %}selected{%endif%}>USA</option>
+                                    <option {%if student.country == 'Canada' %}selected{%endif%}>Canada</option>
+                                    <option {%if student.country == 'Australia' %}selected{%endif%}>Australia</option>
+                                    <option {%if student.country == 'United Kingdom' %}selected{%endif%}>United Kingdom
+                                    </option>
+                                </select>
+
+                            </div>
+
+                          <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <textarea class="form-control" name="address" rows="4" placeholder="Enter Address"
+                                   >{{student.address}}</textarea>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    Register
+                                </button>
+
+                                <button type="reset" class="btn btn-secondary px-4">
+                                    Reset
+                                </button>
+                                <a href="{%url 'display'%}" class="btn btn-warning">Display</a>
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

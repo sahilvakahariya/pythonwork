@@ -1,0 +1,59 @@
+Create vertual env : 
+py -m venv <envname>
+ex : py -m venv myenv
+
+activate :
+ex : myenv/Scripts/activate
+
+install django : 
+pip install django
+
+Create django project : 
+py -m django startproject <projectname>
+
+run project : star
+py manage.py runserver
+
+create app : 
+py manage.py startapp <appname>
+
+add app into settings.py:
+project->settings.py-> INSTALLEDAPP -> <yourapp>
+
+set url : in project
+urls.py
+path("",include("myapp.urls"))
+
+set url : in app
+from myapp.views import *
+path("",index, name="index")
+
+create funcion in views : 
+def index(request):
+	return render(request,"index.html")
+
+-------
+create templates forlder in myapp
+create your html file
+ex : index.html
+
+
+
+
+env
+project
+app --> 1 ) templates 2) urls.py
+
+
+Models : 
+create model in models.py
+register model in admin.py
+
+to store changes : 
+py manage.py makemigrations
+
+appy change sin db :
+py manage.py migrate
+
+create admin user : 
+py manage.py createsuperuser

@@ -1,3 +1,4 @@
+#inheritance is a child class can access parent class data and function.
 #inheritance is a parent child relationship between two classes.
 class A:
     id= 10

@@ -1,7 +1,7 @@
-class is a collection of data members and function members.
-class is a blueprint for creating objects.
-self is a reference variable that refers to the current object.
-object is an instance of a class.
+# class is a collection of data members and member functions.
+# class is a blueprint for creating objects.
+# self is a reference variable that refers to the current object.
+# object is an instance of a class.
 
 class pen:
     price=60

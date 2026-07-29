@@ -1,0 +1,15 @@
+Explore the folder structure of your 'foodiehub_project' and write down the purpose of each key file: manage.py, settings.py, urls.py, wsgi.py, and asgi.py.<br><br><em><strong>Hint:</strong> Check the official Django documentation or use ChatGPT to help you describe each file's role.</em> 
+ANS:-
+manage.py – Used to run Django commands like runserver, migrate, and startapp.
+settings.py – Stores all project settings such as database, installed apps, templates, and security.
+urls.py – Defines the URL routes and connects URLs to views.
+wsgi.py – Used to deploy the Django project on a WSGI-compatible web server.
+asgi.py – Used to run the Django project with ASGI servers and supports asynchronous features like WebSockets.
+
+
+
+Write a short comparison (3-4 lines) between Django and Flask, focusing on features and use cases for each. Use an example app you use daily (like Instagram or Zomato) to explain which framework would be better and why.
+ans:-
+Django is a full-featured web framework with built-in tools like authentication, admin panel, and database management, making it ideal for large applications. Flask is a lightweight framework that gives developers more flexibility and is best for small or simple projects.
+
+Example: An app like Instagram or Zomato is better built with Django because it requires user login, database management, security, and many built-in features to handle a large number of users efficiently.

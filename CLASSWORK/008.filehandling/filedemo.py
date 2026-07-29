@@ -60,7 +60,7 @@ with open("abc.txt",'w+') as f:
 
 with open("abc.txt",'a+') as f:
     f.write("patel brother")
-    f.seek(0)
+    f.seek(0)  
     data=f.read()
     print(data)
 

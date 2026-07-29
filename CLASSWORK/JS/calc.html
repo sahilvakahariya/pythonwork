@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+
+    <script>
+        function calculate(op) {
+            let a = Number(document.getElementById("a").value);
+            let b = Number(document.getElementById("b").value);
+            let result = document.getElementById("result");
+
+            switch (op) {
+                case '+':
+                    result.innerHTML = a + b;
+                    break;
+                case '-':
+                    result.innerHTML = a - b;
+                    break;
+                case '*':
+                    result.innerHTML = a * b;
+                    break;
+                case '/':
+                    result.innerHTML = b !== 0 ? a / b : "Cannot divide by zero";
+                    break;
+            }
+        }
+    </script>
+</head>
+<body>
+    <input type="number" id="a" placeholder="Enter first number">
+    <input type="number" id="b" placeholder="Enter second number">
+
+    <h3>Result: <span id="result">0</span></h3>
+
+    <button onclick="calculate('+')">ADD</button>
+    <button onclick="calculate('-')">SUB</button>
+    <button onclick="calculate('*')">MUL</button>
+    <button onclick="calculate('/')">DIV</button>
+</body>
+</html>

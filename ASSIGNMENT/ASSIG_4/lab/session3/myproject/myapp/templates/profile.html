@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+</head>
+<body>
+    
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>My Profile</h1>
+
+<div class="card p-4">
+    <h3>Sahil Patel</h3>
+    <p>Email: sahil@example.com</p>
+    <p>Favorite Food: Pizza 🍕</p>
+</div>
+
+{% endblock %}
+
+<a href="{% url 'home' %}">Home</a>
+
+</body>
+</html>

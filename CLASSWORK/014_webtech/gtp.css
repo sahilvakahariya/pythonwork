@@ -1,0 +1,133 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo img {
+    width: 120px;
+}
+
+.title {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 10px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+/* Main */
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Login Card */
+.form {
+    width: 400px;
+    padding: 35px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    color: white;
+}
+
+.form h2 {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.form p {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #ddd;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    outline: none;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.input-group input:focus {
+    box-shadow: 0 0 10px #4facfe;
+}
+
+/* Buttons */
+.btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-login,
+.btn-reset {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-login {
+    background: #00c853;
+    color: white;
+}
+
+.btn-login:hover {
+    background: #00a844;
+    transform: translateY(-2px);
+}
+
+.btn-reset {
+    background: #ff5252;
+    color: white;
+}
+
+.btn-reset:hover {
+    background: #e53935;
+    transform: translateY(-2px);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    color: white;
+    font-size: 14px;
+}
