@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Sending Form</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .email-card {
+            max-width: 650px;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .card-header-custom {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            padding: 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .card-header-custom h2 {
+            font-weight: 700;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .form-floating textarea {
+            height: 150px !important;
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 600;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .btn-send:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        .input-icon input {
+            padding-left: 45px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="card email-card">
+
+    <div class="card-header-custom">
+        <i class="bi bi-envelope-paper-fill fs-1"></i>
+        <h2 class="mt-2">Send Email</h2>
+        <p class="mb-0">Compose and send your message instantly</p>
+    </div>
+
+
+    <div class="card-body p-4 bg-white">
+
+        <span class="text-success">{{msg}}</span>
+
+        <form method="post" action="{%url 'mail'%}">
+
+            {%csrf_token%}
+
+            <!-- To -->
+            <div class="mb-4 input-icon">
+                <i class="bi bi-person-fill"></i>
+                <input 
+                    type="email" 
+                    class="form-control"
+                    name="to"
+                    placeholder="Recipient Email"
+                    required>
+            </div>
+
+
+            <!-- Subject -->
+            <div class="form-floating mb-4">
+                <input 
+                    type="text"
+                    class="form-control"
+                    id="subject"
+                    name="subject"
+                    placeholder="Subject">
+                <label for="subject">
+                    <i class="bi bi-chat-left-text"></i> Subject
+                </label>
+            </div>
+
+
+            <!-- Body -->
+            <div class="form-floating mb-4">
+                <textarea 
+                    class="form-control"
+                    id="message"
+                    name="message"
+                    placeholder="Message"></textarea>
+
+                <label for="message">
+                    <i class="bi bi-pencil-square"></i> Message
+                </label>
+            </div>
+
+
+            <!-- Attachment
+            <div class="mb-4">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-paperclip"></i> Attachment
+                </label>
+
+                <input 
+                    type="file"
+                    class="form-control">
+            </div> -->
+
+
+            <!-- Send Button -->
+            <button class="btn btn-send w-100">
+                <i class="bi bi-send-fill"></i>
+                Send Email
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
