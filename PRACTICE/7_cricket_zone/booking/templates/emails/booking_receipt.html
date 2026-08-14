@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>
+7 Cricket Zone Receipt
+</title>
+
+</head>
+
+
+<body
+style="
+margin:0;
+padding:30px 10px;
+background:#f4f6f5;
+font-family:Arial,sans-serif;
+"
+>
+
+
+<table
+width="100%"
+cellpadding="0"
+cellspacing="0"
+>
+
+<tr>
+
+<td align="center">
+
+
+<table
+width="600"
+style="
+max-width:600px;
+background:#ffffff;
+border-radius:18px;
+overflow:hidden;
+"
+>
+
+
+<tr>
+
+<td
+style="
+background:#06140d;
+padding:30px;
+text-align:center;
+"
+>
+
+<h1
+style="
+margin:0;
+color:#ffc107;
+"
+>
+
+7 CRICKET ZONE
+
+</h1>
+
+<p
+style="
+color:white;
+"
+>
+
+BOOKING RECEIPT
+
+</p>
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+padding:30px;
+"
+>
+
+<h2
+style="
+color:#198754;
+"
+>
+
+PAYMENT SUCCESSFUL
+
+</h2>
+
+
+<p>
+
+Hello {{ booking.name }},
+
+</p>
+
+
+<p>
+
+Your booking has been successfully
+confirmed.
+
+</p>
+
+
+<hr>
+
+
+<p>
+<b>Booking ID:</b>
+#{{ booking.id }}
+</p>
+
+
+<p>
+<b>Date:</b>
+{{ booking.date|date:"d M Y" }}
+</p>
+
+
+<p>
+<b>Time:</b>
+{{ booking.time|time:"h:i A" }}
+</p>
+
+
+<p>
+<b>Ball:</b>
+{{ booking.ball_type }}
+</p>
+
+
+<p>
+<b>Overs:</b>
+{{ booking.overs }}
+</p>
+
+
+<p>
+<b>Amount Paid:</b>
+₹{{ booking.amount }}
+</p>
+
+
+<p>
+
+<b>Payment Status:</b>
+
+<span style="color:#198754;">
+
+SUCCESS
+
+</span>
+
+</p>
+
+
+<hr>
+
+
+<p>
+
+Thank you for choosing
+<b>7 Cricket Zone</b>.
+
+</p>
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+background:#06140d;
+padding:20px;
+text-align:center;
+color:white;
+"
+>
+
+7 Cricket Zone
+
+</td>
+
+</tr>
+
+
+</table>
+
+
+</td>
+
+</tr>
+
+</table>
+
+</body>
+
+</html>

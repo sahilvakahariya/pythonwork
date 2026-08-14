@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}
+Payment | 7 Cricket Zone
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.payment-page {
+    min-height: 90vh;
+    padding: 50px 15px;
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(255,193,7,.12),
+            transparent 40%
+        ),
+        #020906;
+
+    color: white;
+}
+
+.payment-card {
+    max-width: 600px;
+    margin: auto;
+    padding: 35px 25px;
+
+    border-radius: 25px;
+
+    background: rgba(255,255,255,.05);
+
+    border: 1px solid rgba(255,255,255,.10);
+
+    text-align: center;
+
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+}
+
+.payment-card h1 {
+    font-weight: 900;
+}
+
+.payment-card h1 span {
+    color: #ffc107;
+}
+
+.payment-card > p {
+    color: rgba(255,255,255,.70);
+}
+
+.booking-info {
+    margin: 25px 0;
+    padding: 20px;
+
+    border-radius: 18px;
+
+    background: rgba(255,255,255,.05);
+
+    text-align: left;
+}
+
+.booking-info p {
+    margin-bottom: 8px;
+    color: rgba(255,255,255,.75);
+}
+
+.booking-info strong {
+    color: white;
+}
+
+.qr-box {
+    background: white;
+
+    display: inline-block;
+
+    padding: 15px;
+
+    border-radius: 20px;
+
+    margin: 20px 0;
+}
+
+.qr-box img {
+    width: 260px;
+    max-width: 100%;
+    display: block;
+}
+
+.upi-id {
+    color: #ffc107;
+
+    font-weight: 800;
+
+    font-size: 18px;
+
+    margin-top: 5px;
+}
+
+.pay-button {
+    display: block;
+
+    width: 100%;
+
+    margin-top: 20px;
+
+    padding: 15px;
+
+    border-radius: 14px;
+
+    background: #ffc107;
+
+    color: #111;
+
+    text-decoration: none;
+
+    font-weight: 900;
+
+    transition: .3s;
+}
+
+.pay-button:hover {
+    background: #ffca2c;
+    color: #111;
+
+    transform: translateY(-2px);
+}
+
+.note {
+    margin-top: 20px;
+
+    padding: 15px;
+
+    border-radius: 14px;
+
+    background: rgba(255,193,7,.08);
+
+    border: 1px solid rgba(255,193,7,.20);
+
+    color: rgba(255,255,255,.60);
+
+    font-size: 13px;
+}
+
+</style>
+
+
+<section class="payment-page">
+
+    <div class="payment-card">
+
+        <!-- TITLE -->
+
+        <h1>
+            COMPLETE
+            <span>PAYMENT</span>
+        </h1>
+
+        <p>
+            Scan the QR code using any UPI app
+        </p>
+
+
+        <!-- BOOKING DETAILS -->
+
+        <div class="booking-info">
+
+            <p>
+                Booking ID:
+                <strong>#{{ booking.id }}</strong>
+            </p>
+
+            <p>
+                Customer:
+                <strong>{{ booking.name }}</strong>
+            </p>
+
+            <p>
+                Date:
+                <strong>{{ booking.date }}</strong>
+            </p>
+
+            <p>
+                Time:
+                <strong>
+                    {{ booking.time|time:"h:i A" }}
+                </strong>
+            </p>
+
+            <p>
+                Ball:
+                <strong>{{ booking.ball_type }}</strong>
+            </p>
+
+            <p>
+                Overs:
+                <strong>{{ booking.overs }}</strong>
+            </p>
+
+            <p>
+                Amount:
+                <strong>₹{{ booking.amount }}</strong>
+            </p>
+
+        </div>
+
+
+        <!-- QR CODE -->
+
+        <div class="qr-box">
+
+            <img
+                src="data:image/png;base64,{{ qr_code }}"
+                alt="UPI Payment QR"
+            >
+
+        </div>
+
+
+        <!-- UPI ID -->
+
+        <div>
+            Pay to:
+        </div>
+
+        <div class="upi-id">
+            {{ upi_id }}
+        </div>
+
+
+        <!-- OPEN UPI APP -->
+
+        <a
+            href="{{ upi_url }}"
+            class="pay-button"
+        >
+            📱 OPEN UPI APP
+        </a>
+
+
+        <!-- INFORMATION -->
+
+        <div class="note">
+
+            🔒 Complete your payment using
+            Google Pay, PhonePe, Paytm or any UPI app.
+
+            <br><br>
+
+            After successful payment verification,
+            your receipt will be sent to your email
+            and you will be redirected to the Home page.
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

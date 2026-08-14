@@ -1,0 +1,1695 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Book Your Slot | 7 Cricket Zone
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =====================================================
+MAIN
+===================================================== */
+
+.booking-page {
+    min-height: calc(100vh - 76px);
+    padding: 70px 0 100px;
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* =====================================================
+BACKGROUND
+===================================================== */
+
+.booking-page::before {
+    content: "";
+
+    position: absolute;
+
+    width: 650px;
+    height: 650px;
+
+    left: -280px;
+    top: 50px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(15, 107, 58, 0.20);
+
+    filter: blur(110px);
+
+    pointer-events: none;
+}
+
+
+.booking-page::after {
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    right: -250px;
+    bottom: 50px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 193, 7, 0.10);
+
+    filter: blur(110px);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+HEADER
+===================================================== */
+
+.booking-header {
+    position: relative;
+    z-index: 2;
+
+    text-align: center;
+
+    margin-bottom: 45px;
+}
+
+
+.booking-kicker {
+    display: inline-flex;
+
+    align-items: center;
+    gap: 9px;
+
+    color: #ffc107;
+
+    font-size: 11px;
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 12px;
+}
+
+
+.booking-kicker::before,
+.booking-kicker::after {
+    content: "";
+
+    width: 28px;
+    height: 2px;
+
+    background: #ffc107;
+}
+
+
+.booking-title {
+    font-family:
+        "Barlow Condensed",
+        sans-serif;
+
+    font-size:
+        clamp(48px, 8vw, 80px);
+
+    line-height: .9;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    margin: 0;
+}
+
+
+.booking-title span {
+    color: #ffc107;
+}
+
+
+.booking-subtitle {
+    max-width: 650px;
+
+    margin: 18px auto 0;
+
+    color:
+        rgba(255,255,255,0.55);
+
+    font-size: 13px;
+
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+MAIN CARD
+===================================================== */
+
+.booking-card {
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 1100px;
+
+    margin: auto;
+
+    padding: 35px;
+
+    border-radius: 28px;
+
+    background:
+        rgba(4,10,7,0.80);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.09);
+
+    backdrop-filter: blur(22px);
+
+    -webkit-backdrop-filter: blur(22px);
+
+    box-shadow:
+        0 35px 100px
+        rgba(0,0,0,0.45);
+}
+
+
+/* =====================================================
+LABEL
+===================================================== */
+
+.form-label-custom {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color:
+        rgba(255,255,255,0.78);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .8px;
+
+    text-transform: uppercase;
+}
+
+
+/* =====================================================
+INPUT
+===================================================== */
+
+.booking-input {
+    width: 100%;
+
+    min-height: 50px;
+
+    padding: 13px 15px;
+
+    border-radius: 13px;
+
+    background:
+        rgba(255,255,255,0.055);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.10);
+
+    color: #fff;
+
+    outline: none;
+
+    font-size: 13px;
+
+    transition: .25s ease;
+}
+
+
+.booking-input::placeholder {
+    color:
+        rgba(255,255,255,0.28);
+}
+
+
+.booking-input:focus {
+    border-color:
+        rgba(255,193,7,0.60);
+
+    background:
+        rgba(255,255,255,0.075);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(255,193,7,0.07);
+}
+
+
+.booking-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: .7;
+}
+
+
+/* =====================================================
+SLOT SECTION
+===================================================== */
+
+.slot-section {
+    margin-top: 32px;
+
+    padding-top: 30px;
+
+    border-top:
+        1px solid
+        rgba(255,255,255,0.07);
+}
+
+
+.slot-heading {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+}
+
+
+.slot-heading h5 {
+    font-family:
+        "Barlow Condensed",
+        sans-serif;
+
+    font-size: 28px;
+
+    font-weight: 800;
+
+    margin: 0;
+}
+
+
+.slot-note {
+    color:
+        rgba(255,255,255,0.42);
+
+    font-size: 11px;
+}
+
+
+/* =====================================================
+PERIOD TITLE
+===================================================== */
+
+.period-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 25px 0 12px;
+
+    color: #ffc107;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1.5px;
+}
+
+
+.period-title::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background:
+        rgba(255,193,7,0.15);
+}
+
+
+/* =====================================================
+SLOT GRID
+===================================================== */
+
+.slot-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 10px;
+}
+
+
+/* =====================================================
+SLOT BUTTON
+===================================================== */
+
+.slot-button {
+    min-height: 55px;
+
+    border-radius: 13px;
+
+    border:
+        1px solid
+        rgba(32,163,91,0.32);
+
+    background:
+        rgba(32,163,91,0.08);
+
+    color:
+        #bce8cf;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: .22s ease;
+
+    padding: 8px;
+}
+
+
+.slot-button small {
+    display: block;
+
+    margin-top: 3px;
+
+    color:
+        rgba(255,255,255,0.35);
+
+    font-size: 9px;
+
+    font-weight: 600;
+}
+
+
+.slot-button:hover:not(.booked) {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(255,193,7,0.65);
+
+    color:
+        #ffc107;
+
+    background:
+        rgba(255,193,7,0.07);
+}
+
+
+.slot-button.selected {
+    background:
+        linear-gradient(
+            135deg,
+            #ffc107,
+            #ffb300
+        );
+
+    border-color:
+        #ffc107;
+
+    color:
+        #050805;
+
+    box-shadow:
+        0 8px 25px
+        rgba(255,193,7,0.20);
+}
+
+
+.slot-button.selected small {
+    color:
+        rgba(0,0,0,0.65);
+}
+
+
+/* =====================================================
+BOOKED SLOT
+===================================================== */
+
+.slot-button.booked {
+    background:
+        rgba(220,53,69,0.15);
+
+    border-color:
+        rgba(220,53,69,0.40);
+
+    color:
+        #ff6b78;
+
+    cursor:
+        not-allowed;
+
+    text-decoration:
+        line-through;
+
+    opacity: .75;
+}
+
+
+.slot-button.booked small {
+    color:
+        #ff7f8a;
+
+    text-decoration:
+        none;
+}
+
+
+/* =====================================================
+BALL
+===================================================== */
+
+.ball-section {
+    margin-top: 32px;
+}
+
+
+.ball-options {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 12px;
+}
+
+
+.ball-option {
+    position: relative;
+}
+
+
+.ball-option input {
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+
+.ball-label {
+    display: block;
+
+    padding: 18px;
+
+    border-radius: 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.09);
+
+    background:
+        rgba(255,255,255,0.045);
+
+    cursor: pointer;
+
+    transition: .25s ease;
+}
+
+
+.ball-label:hover {
+    border-color:
+        rgba(255,193,7,0.35);
+}
+
+
+.ball-option input:checked +
+.ball-label {
+    border-color:
+        #ffc107;
+
+    background:
+        rgba(255,193,7,0.08);
+
+    box-shadow:
+        0 8px 25px
+        rgba(255,193,7,0.08);
+}
+
+
+.ball-title {
+    display: block;
+
+    font-family:
+        "Barlow Condensed",
+        sans-serif;
+
+    font-size: 23px;
+
+    font-weight: 800;
+}
+
+
+.ball-price {
+    display: block;
+
+    margin-top: 3px;
+
+    color:
+        rgba(255,255,255,0.45);
+
+    font-size: 11px;
+}
+
+
+/* =====================================================
+TOTAL
+===================================================== */
+
+.total-box {
+    margin-top: 30px;
+
+    padding: 22px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(15,107,58,0.22),
+            rgba(255,193,7,0.055)
+        );
+
+    border:
+        1px solid
+        rgba(255,193,7,0.14);
+}
+
+
+.total-label {
+    color:
+        rgba(255,255,255,0.45);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+}
+
+
+.total-amount {
+    font-family:
+        "Barlow Condensed",
+        sans-serif;
+
+    font-size: 45px;
+
+    line-height: 1;
+
+    font-weight: 900;
+
+    color: #ffc107;
+
+    margin-top: 5px;
+}
+
+
+/* =====================================================
+SUBMIT
+===================================================== */
+
+.submit-btn {
+    width: 100%;
+
+    min-height: 55px;
+
+    margin-top: 20px;
+
+    border: 0;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffc107,
+            #ffb300
+        );
+
+    color: #050805;
+
+    font-size: 13px;
+
+    font-weight: 900;
+
+    letter-spacing: .8px;
+
+    cursor: pointer;
+
+    transition: .3s ease;
+
+    box-shadow:
+        0 12px 30px
+        rgba(255,193,7,0.15);
+}
+
+
+.submit-btn:hover {
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 18px 40px
+        rgba(255,193,7,0.25);
+}
+
+
+/* =====================================================
+MESSAGE
+===================================================== */
+
+.booking-message {
+    margin-bottom: 20px;
+
+    padding: 13px 15px;
+
+    border-radius: 12px;
+
+    font-size: 12px;
+
+    background:
+        rgba(220,53,69,0.10);
+
+    border:
+        1px solid
+        rgba(220,53,69,0.20);
+
+    color: #ff9ca6;
+}
+
+
+/* =====================================================
+RESPONSIVE
+===================================================== */
+
+@media (max-width: 900px) {
+
+    .slot-grid {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .booking-page {
+        padding:
+            50px 0 75px;
+    }
+
+    .booking-card {
+        padding: 22px;
+
+        border-radius: 22px;
+    }
+
+    .slot-grid {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .slot-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .ball-options {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-card {
+        padding: 17px;
+    }
+}
+
+</style>
+
+
+<section class="booking-page">
+
+<div class="container">
+
+
+    <!-- =================================================
+        HEADER
+    ================================================== -->
+
+    <div class="booking-header">
+
+        <div class="booking-kicker">
+            ONLINE BOOKING
+        </div>
+
+        <h1 class="booking-title">
+            BOOK YOUR
+            <span>SLOT</span>
+        </h1>
+
+        <p class="booking-subtitle">
+            Choose your date, select an available
+            15-minute slot and create your cricket
+            booking at 7 Cricket Zone.
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+        CARD
+    ================================================== -->
+
+    <div class="booking-card">
+
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="booking-message">
+
+                    <i class="bi bi-exclamation-circle me-2"></i>
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <form
+            method="POST"
+            id="bookingForm"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- =================================================
+                CUSTOMER
+            ================================================== -->
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label-custom">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="name"
+                        class="booking-input"
+                        placeholder="Enter your full name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label-custom">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        class="booking-input"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label-custom">
+                        Mobile Number
+                    </label>
+
+                    <input
+                        type="tel"
+                        name="mobile"
+                        class="booking-input"
+                        placeholder="Enter mobile number"
+                        maxlength="15"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label-custom">
+                        Booking Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="date"
+                        id="bookingDate"
+                        class="booking-input"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                TIME SLOTS
+            ================================================== -->
+
+            <div class="slot-section">
+
+                <div class="slot-heading">
+
+                    <h5>
+                        Select Time Slot
+                    </h5>
+
+                    <div class="slot-note">
+                        08:00 AM — 12:00 AM
+                    </div>
+
+                </div>
+
+
+                <input
+                    type="hidden"
+                    name="time"
+                    id="selectedTime"
+                    required
+                >
+
+
+                <!-- MORNING -->
+
+                <div class="period-title">
+                    ☀️ Morning
+                </div>
+
+                <div class="slot-grid">
+
+                    {% for slot in slots %}
+
+                        {% if slot.period == "Morning" %}
+
+                            <button
+                                type="button"
+                                class="slot-button"
+                                data-time="{{ slot.value }}"
+                            >
+
+                                {{ slot.display }}
+
+                                <small>
+                                    Available
+                                </small>
+
+                            </button>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- AFTERNOON -->
+
+                <div class="period-title">
+                    🌤️ Afternoon
+                </div>
+
+                <div class="slot-grid">
+
+                    {% for slot in slots %}
+
+                        {% if slot.period == "Afternoon" %}
+
+                            <button
+                                type="button"
+                                class="slot-button"
+                                data-time="{{ slot.value }}"
+                            >
+
+                                {{ slot.display }}
+
+                                <small>
+                                    Available
+                                </small>
+
+                            </button>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- EVENING -->
+
+                <div class="period-title">
+                    🌆 Evening
+                </div>
+
+                <div class="slot-grid">
+
+                    {% for slot in slots %}
+
+                        {% if slot.period == "Evening" %}
+
+                            <button
+                                type="button"
+                                class="slot-button"
+                                data-time="{{ slot.value }}"
+                            >
+
+                                {{ slot.display }}
+
+                                <small>
+                                    Available
+                                </small>
+
+                            </button>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- NIGHT -->
+
+                <div class="period-title">
+                    🌙 Night
+                </div>
+
+                <div class="slot-grid">
+
+                    {% for slot in slots %}
+
+                        {% if slot.period == "Night" %}
+
+                            <button
+                                type="button"
+                                class="slot-button"
+                                data-time="{{ slot.value }}"
+                            >
+
+                                {{ slot.display }}
+
+                                <small>
+                                    Available
+                                </small>
+
+                            </button>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                BALL
+            ================================================== -->
+
+            <div class="ball-section">
+
+                <label class="form-label-custom">
+                    Select Ball
+                </label>
+
+
+                <div class="ball-options">
+
+
+                    <div class="ball-option">
+
+                        <input
+                            type="radio"
+                            name="ball_type"
+                            id="tennisBall"
+                            value="Tennis Ball"
+                            checked
+                        >
+
+                        <label
+                            for="tennisBall"
+                            class="ball-label"
+                        >
+
+                            <span class="ball-title">
+                                🟡 Tennis Ball
+                            </span>
+
+                            <span class="ball-price">
+                                Starting from ₹99
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="ball-option">
+
+                        <input
+                            type="radio"
+                            name="ball_type"
+                            id="puBall"
+                            value="PU Ball"
+                        >
+
+                        <label
+                            for="puBall"
+                            class="ball-label"
+                        >
+
+                            <span class="ball-title">
+                                🔴 PU Ball
+                            </span>
+
+                            <span class="ball-price">
+                                Starting from ₹120
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                OVERS
+            ================================================== -->
+
+            <div class="mt-4">
+
+                <label class="form-label-custom">
+                    Select Overs
+                </label>
+
+                <select
+                    name="overs"
+                    id="overs"
+                    class="booking-input"
+                    required
+                >
+
+                    <option value="5">
+                        5 Overs
+                    </option>
+
+                    <option
+                        value="10"
+                        selected
+                    >
+                        10 Overs
+                    </option>
+
+                    <option value="15">
+                        15 Overs
+                    </option>
+
+                    <option value="20">
+                        20 Overs
+                    </option>
+
+                    <option value="30">
+                        30 Overs
+                    </option>
+
+                    <option value="40">
+                        40 Overs
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =================================================
+                TOTAL
+            ================================================== -->
+
+            <div class="total-box">
+
+                <div class="total-label">
+                    TOTAL BOOKING AMOUNT
+                </div>
+
+                <div
+                    class="total-amount"
+                    id="totalAmount"
+                >
+                    ₹150
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                SUBMIT
+            ================================================== -->
+
+            <button
+                type="submit"
+                class="submit-btn"
+            >
+
+                <i class="bi bi-credit-card me-2"></i>
+
+                CONTINUE TO PAYMENT
+
+            </button>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* =====================================================
+        ELEMENTS
+        ===================================================== */
+
+        const dateInput =
+            document.getElementById(
+                "bookingDate"
+            );
+
+        const timeInput =
+            document.getElementById(
+                "selectedTime"
+            );
+
+        const slotButtons =
+            document.querySelectorAll(
+                ".slot-button"
+            );
+
+        const overs =
+            document.getElementById(
+                "overs"
+            );
+
+        const totalAmount =
+            document.getElementById(
+                "totalAmount"
+            );
+
+        const ballInputs =
+            document.querySelectorAll(
+                'input[name="ball_type"]'
+            );
+
+        const bookingForm =
+            document.getElementById(
+                "bookingForm"
+            );
+
+
+        /* =====================================================
+        BOOKED SLOTS FROM DJANGO
+        ===================================================== */
+
+        const bookedSlots = [
+            {% for booked_slot in booked %}
+                "{{ booked_slot }}"{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+
+        /* =====================================================
+        TODAY
+        ===================================================== */
+
+        const today =
+            new Date();
+
+        const year =
+            today.getFullYear();
+
+        const month =
+            String(
+                today.getMonth() + 1
+            ).padStart(2, "0");
+
+        const day =
+            String(
+                today.getDate()
+            ).padStart(2, "0");
+
+        const todayString =
+            `${year}-${month}-${day}`;
+
+        dateInput.min =
+            todayString;
+
+
+        /* =====================================================
+        UPDATE BOOKED SLOTS
+        ===================================================== */
+
+        function updateBookedSlots() {
+
+            const selectedDate =
+                dateInput.value;
+
+
+            /*
+            Clear selected time
+            whenever date changes
+            */
+
+            timeInput.value = "";
+
+
+            slotButtons.forEach(
+                function (button) {
+
+                    button.classList.remove(
+                        "selected"
+                    );
+
+                    button.classList.remove(
+                        "booked"
+                    );
+
+                    button.disabled = false;
+
+                    button.style.pointerEvents =
+                        "auto";
+
+
+                    const smallText =
+                        button.querySelector(
+                            "small"
+                        );
+
+
+                    if (!selectedDate) {
+
+                        if (smallText) {
+
+                            smallText.textContent =
+                                "Select Date";
+
+                        }
+
+                        return;
+                    }
+
+
+                    /*
+                    Backend format:
+
+                    YYYY-MM-DD|HH:MM
+                    */
+
+                    const slotKey =
+                        selectedDate +
+                        "|" +
+                        button.dataset.time;
+
+
+                    if (
+                        bookedSlots.includes(
+                            slotKey
+                        )
+                    ) {
+
+                        button.classList.add(
+                            "booked"
+                        );
+
+                        button.disabled =
+                            true;
+
+                        button.style.pointerEvents =
+                            "none";
+
+
+                        if (smallText) {
+
+                            smallText.textContent =
+                                "BOOKED";
+
+                        }
+
+                    }
+                    else {
+
+                        if (smallText) {
+
+                            smallText.textContent =
+                                "Available";
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+        DATE CHANGE
+        ===================================================== */
+
+        dateInput.addEventListener(
+            "change",
+            function () {
+
+                updateBookedSlots();
+
+            }
+        );
+
+
+        /* =====================================================
+        PRICE
+        ===================================================== */
+
+        const prices = {
+
+            "Tennis Ball": {
+
+                "5": 99,
+                "10": 150,
+                "15": 200,
+                "20": 250,
+                "30": 299,
+                "40": 399
+
+            },
+
+            "PU Ball": {
+
+                "5": 120,
+                "10": 180,
+                "15": 250,
+                "20": 300,
+                "30": 349,
+                "40": 499
+
+            }
+
+        };
+
+
+        /* =====================================================
+        UPDATE PRICE
+        ===================================================== */
+
+        function updatePrice() {
+
+            const selectedBall =
+                document.querySelector(
+                    'input[name="ball_type"]:checked'
+                );
+
+
+            if (!selectedBall) {
+                return;
+            }
+
+
+            const ball =
+                selectedBall.value;
+
+            const over =
+                overs.value;
+
+
+            const price =
+                prices[ball][over];
+
+
+            totalAmount.textContent =
+                "₹" + price;
+
+        }
+
+
+        /* =====================================================
+        BALL CHANGE
+        ===================================================== */
+
+        ballInputs.forEach(
+            function (input) {
+
+                input.addEventListener(
+                    "change",
+                    updatePrice
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+        OVERS CHANGE
+        ===================================================== */
+
+        overs.addEventListener(
+            "change",
+            updatePrice
+        );
+
+
+        /* =====================================================
+        SLOT SELECT
+        ===================================================== */
+
+        slotButtons.forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+
+                        /*
+                        No date selected
+                        */
+
+                        if (!dateInput.value) {
+
+                            alert(
+                                "Please select booking date first."
+                            );
+
+                            dateInput.focus();
+
+                            return;
+                        }
+
+
+                        /*
+                        Booked slot
+                        */
+
+                        if (
+                            button.classList.contains(
+                                "booked"
+                            )
+                        ) {
+
+                            alert(
+                                "❌ This slot is already booked. Please select another slot."
+                            );
+
+                            return;
+                        }
+
+
+                        /*
+                        Remove previous selection
+                        */
+
+                        slotButtons.forEach(
+                            function (btn) {
+
+                                btn.classList.remove(
+                                    "selected"
+                                );
+
+                            }
+                        );
+
+
+                        /*
+                        Select current slot
+                        */
+
+                        button.classList.add(
+                            "selected"
+                        );
+
+
+                        /*
+                        Save selected time
+                        */
+
+                        timeInput.value =
+                            button.dataset.time;
+
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+        FORM VALIDATION
+        ===================================================== */
+
+        bookingForm.addEventListener(
+            "submit",
+            function (event) {
+
+
+                /* DATE */
+
+                if (!dateInput.value) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please select booking date."
+                    );
+
+                    dateInput.focus();
+
+                    return;
+                }
+
+
+                /* TIME */
+
+                if (!timeInput.value) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Please select a time slot."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                Extra frontend check
+                */
+
+                const selectedKey =
+                    dateInput.value +
+                    "|" +
+                    timeInput.value;
+
+
+                if (
+                    bookedSlots.includes(
+                        selectedKey
+                    )
+                ) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "❌ This slot is already booked. Please select another slot."
+                    );
+
+                    updateBookedSlots();
+
+                    return;
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+        INITIAL PRICE
+        ===================================================== */
+
+        updatePrice();
+
+
+        /*
+        Initially no date is selected,
+        so slots show Select Date.
+        */
+
+        updateBookedSlots();
+
+    }
+);
+
+</script>
+
+{% endblock %}

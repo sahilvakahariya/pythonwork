@@ -1,0 +1,1968 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+7 Cricket Zone | Premium Cricket Turf
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero-section {
+    min-height: calc(100vh - 76px);
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    overflow: hidden;
+
+    padding: 80px 0;
+}
+
+
+/* HERO PHOTO */
+
+.hero-photo {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.90) 0%,
+            rgba(0, 15, 9, 0.78) 45%,
+            rgba(0, 0, 0, 0.45) 100%
+        ),
+        url("{% static 'images/back.png' %}");
+
+    background-size: cover;
+
+    background-position: center;
+
+    transform: scale(1.03);
+
+    z-index: -3;
+}
+
+
+/* GREEN GLOW */
+
+.hero-glow-green {
+    position: absolute;
+
+    width: 500px;
+
+    height: 500px;
+
+    left: -180px;
+
+    bottom: -200px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(18, 150, 80, 0.22);
+
+    filter: blur(100px);
+
+    z-index: -2;
+}
+
+
+/* GOLD GLOW */
+
+.hero-glow-gold {
+    position: absolute;
+
+    width: 350px;
+
+    height: 350px;
+
+    right: -120px;
+
+    top: 80px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 193, 7, 0.10);
+
+    filter: blur(90px);
+
+    z-index: -2;
+}
+
+
+/* =========================================================
+   HERO CONTENT
+========================================================= */
+
+.hero-content {
+    max-width: 850px;
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.hero-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 9px 15px;
+
+    margin-bottom: 22px;
+
+    border-radius: 50px;
+
+    background:
+        rgba(255, 193, 7, 0.08);
+
+    border:
+        1px solid
+        rgba(255, 193, 7, 0.30);
+
+    color:
+        #ffc107;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+
+    backdrop-filter: blur(10px);
+}
+
+
+.hero-badge-dot {
+
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #20a35b;
+
+    box-shadow:
+        0 0 12px
+        rgba(32, 163, 91, 0.9);
+
+    animation:
+        pulseDot 1.8s infinite;
+}
+
+
+@keyframes pulseDot {
+
+    0%, 100% {
+        transform: scale(1);
+
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.45);
+
+        opacity: 0.55;
+    }
+}
+
+
+.hero-title {
+
+    font-family:
+        "Barlow Condensed",
+        sans-serif;
+
+    font-size:
+        clamp(64px, 10vw, 125px);
+
+    font-weight:
+        900;
+
+    line-height:
+        0.82;
+
+    letter-spacing:
+        -2px;
+
+    text-transform:
+        uppercase;
+
+    margin-bottom:
+        28px;
+
+    text-shadow:
+        0 15px 50px
+        rgba(0,0,0,0.45);
+}
+
+
+.hero-title .gold {
+    color:
+        #ffc107;
+}
+
+
+.hero-title .outline {
+
+    color:
+        transparent;
+
+    -webkit-text-stroke:
+        1px rgba(255,255,255,0.60);
+}
+
+
+.hero-description {
+
+    max-width:
+        650px;
+
+    color:
+        rgba(255,255,255,0.70);
+
+    font-size:
+        16px;
+
+    line-height:
+        1.8;
+
+    margin-bottom:
+        32px;
+}
+
+
+/* =========================================================
+   HERO BUTTONS
+========================================================= */
+
+.hero-buttons {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        14px;
+}
+
+
+.hero-main-btn {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        10px;
+
+    padding:
+        15px 24px;
+
+    border-radius:
+        13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffc107,
+            #ffb300
+        );
+
+    border:
+        1px solid #ffc107;
+
+    color:
+        #080b09;
+
+    font-size:
+        14px;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        .4px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(255,193,7,0.20);
+
+    transition:
+        all .3s ease;
+}
+
+
+.hero-main-btn:hover {
+
+    transform:
+        translateY(-4px);
+
+    color:
+        #000;
+
+    box-shadow:
+        0 18px 45px
+        rgba(255,193,7,0.32);
+}
+
+
+.hero-secondary-btn {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        10px;
+
+    padding:
+        15px 24px;
+
+    border-radius:
+        13px;
+
+    background:
+        rgba(255,255,255,0.06);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.16);
+
+    color:
+        #fff;
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+
+    backdrop-filter:
+        blur(12px);
+
+    transition:
+        all .3s ease;
+}
+
+
+.hero-secondary-btn:hover {
+
+    border-color:
+        rgba(255,193,7,0.5);
+
+    color:
+        #ffc107;
+
+    transform:
+        translateY(-3px);
+}
+
+
+/* =========================================================
+   HERO STATS
+========================================================= */
+
+.hero-stats {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        30px;
+
+    margin-top:
+        48px;
+}
+
+
+.hero-stat {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+}
+
+
+.hero-stat-icon {
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        12px;
+
+    color:
+        #ffc107;
+
+    background:
+        rgba(255,193,7,0.08);
+
+    border:
+        1px solid
+        rgba(255,193,7,0.15);
+}
+
+
+.hero-stat strong {
+
+    display:
+        block;
+
+    font-size:
+        15px;
+
+    font-weight:
+        800;
+}
+
+
+.hero-stat small {
+
+    display:
+        block;
+
+    color:
+        rgba(255,255,255,0.48);
+
+    font-size:
+        11px;
+
+    margin-top:
+        2px;
+}
+
+
+/* =========================================================
+   FLOATING INFO CARD
+========================================================= */
+
+.hero-info-card {
+
+    position:
+        absolute;
+
+    right:
+        5%;
+
+    bottom:
+        10%;
+
+    width:
+        260px;
+
+    padding:
+        20px;
+
+    border-radius:
+        20px;
+
+    background:
+        rgba(4,10,7,0.68);
+
+    border:
+        1px solid
+        rgba(255,193,7,0.18);
+
+    backdrop-filter:
+        blur(18px);
+
+    box-shadow:
+        0 25px 60px
+        rgba(0,0,0,0.35);
+
+    animation:
+        floatingCard 4s ease-in-out infinite;
+}
+
+
+@keyframes floatingCard {
+
+    0%, 100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-10px);
+    }
+}
+
+
+.hero-info-label {
+
+    color:
+        #ffc107;
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        1.5px;
+}
+
+
+.hero-info-title {
+
+    font-family:
+        "Barlow Condensed",
+        sans-serif;
+
+    font-size:
+        27px;
+
+    font-weight:
+        800;
+
+    margin-top:
+        5px;
+}
+
+
+.hero-info-row {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+
+    color:
+        rgba(255,255,255,0.65);
+
+    font-size:
+        12px;
+
+    margin-top:
+        8px;
+}
+
+
+.hero-info-row i {
+
+    color:
+        #20a35b;
+}
+
+
+/* =========================================================
+   TICKER
+========================================================= */
+
+.ticker-section {
+
+    overflow:
+        hidden;
+
+    border-top:
+        1px solid
+        rgba(255,193,7,0.10);
+
+    border-bottom:
+        1px solid
+        rgba(255,193,7,0.10);
+
+    background:
+        rgba(0,0,0,0.55);
+
+    backdrop-filter:
+        blur(10px);
+}
+
+
+.ticker-track {
+
+    display:
+        flex;
+
+    width:
+        max-content;
+
+    animation:
+        tickerMove 24s linear infinite;
+}
+
+
+.ticker-item {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+    padding:
+        15px 30px;
+
+    white-space:
+        nowrap;
+
+    font-size:
+        11px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        1.5px;
+
+    color:
+        rgba(255,255,255,0.65);
+}
+
+
+.ticker-item span {
+
+    color:
+        #ffc107;
+
+    font-size:
+        16px;
+}
+
+
+@keyframes tickerMove {
+
+    from {
+        transform:
+            translateX(0);
+    }
+
+    to {
+        transform:
+            translateX(-50%);
+    }
+}
+
+
+/* =========================================================
+   ABOUT
+========================================================= */
+
+.about-section {
+
+    padding:
+        110px 0;
+}
+
+
+.about-card {
+
+    height:
+        100%;
+
+    padding:
+        35px;
+
+    border-radius:
+        25px;
+
+    background:
+        rgba(255,255,255,0.045);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.09);
+
+    backdrop-filter:
+        blur(18px);
+
+    transition:
+        all .3s ease;
+}
+
+
+.about-card:hover {
+
+    transform:
+        translateY(-7px);
+
+    border-color:
+        rgba(255,193,7,0.22);
+}
+
+
+.about-icon {
+
+    width:
+        55px;
+
+    height:
+        55px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    margin-bottom:
+        22px;
+
+    border-radius:
+        16px;
+
+    color:
+        #ffc107;
+
+    background:
+        rgba(255,193,7,0.08);
+
+    border:
+        1px solid
+        rgba(255,193,7,0.14);
+
+    font-size:
+        23px;
+}
+
+
+.about-card h4 {
+
+    font-family:
+        "Barlow Condensed",
+        sans-serif;
+
+    font-size:
+        28px;
+
+    font-weight:
+        800;
+
+    margin-bottom:
+        12px;
+}
+
+
+.about-card p {
+
+    color:
+        rgba(255,255,255,0.55);
+
+    font-size:
+        13px;
+
+    line-height:
+        1.8;
+
+    margin:
+        0;
+}
+
+
+/* =========================================================
+   TIMING
+========================================================= */
+
+.timing-section {
+
+    padding:
+        80px 0 110px;
+}
+
+
+.timing-card {
+
+    padding:
+        28px;
+
+    border-radius:
+        22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.07),
+            rgba(255,255,255,0.025)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,0.09);
+
+    backdrop-filter:
+        blur(15px);
+
+    text-align:
+        center;
+
+    transition:
+        all .3s ease;
+}
+
+
+.timing-card:hover {
+
+    transform:
+        translateY(-7px);
+
+    border-color:
+        rgba(255,193,7,0.28);
+}
+
+
+.timing-icon {
+
+    width:
+        58px;
+
+    height:
+        58px;
+
+    margin:
+        0 auto 17px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    color:
+        #ffc107;
+
+    background:
+        rgba(255,193,7,0.08);
+
+    border:
+        1px solid
+        rgba(255,193,7,0.15);
+
+    font-size:
+        25px;
+}
+
+
+.timing-card h5 {
+
+    font-family:
+        "Barlow Condensed",
+        sans-serif;
+
+    font-size:
+        25px;
+
+    font-weight:
+        800;
+
+    margin:
+        0 0 5px;
+}
+
+
+.timing-card p {
+
+    color:
+        rgba(255,255,255,0.48);
+
+    font-size:
+        12px;
+
+    margin:
+        0;
+}
+
+
+/* =========================================================
+   CTA
+========================================================= */
+
+.cta-section {
+
+    padding:
+        0 0 110px;
+}
+
+
+.cta-card {
+
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    padding:
+        60px 35px;
+
+    text-align:
+        center;
+
+    border-radius:
+        30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(15,107,58,0.45),
+            rgba(4,10,7,0.82)
+        );
+
+    border:
+        1px solid
+        rgba(255,193,7,0.18);
+
+    box-shadow:
+        0 30px 80px
+        rgba(0,0,0,0.30);
+}
+
+
+.cta-card::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    width:
+        300px;
+
+    height:
+        300px;
+
+    right:
+        -100px;
+
+    top:
+        -150px;
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(255,193,7,0.10);
+
+    filter:
+        blur(50px);
+}
+
+
+.cta-card h2 {
+
+    position:
+        relative;
+
+    font-family:
+        "Barlow Condensed",
+        sans-serif;
+
+    font-size:
+        clamp(42px, 7vw, 75px);
+
+    font-weight:
+        900;
+
+    text-transform:
+        uppercase;
+
+    line-height:
+        .9;
+
+    margin-bottom:
+        18px;
+}
+
+
+.cta-card h2 span {
+
+    color:
+        #ffc107;
+}
+
+
+.cta-card p {
+
+    position:
+        relative;
+
+    max-width:
+        600px;
+
+    margin:
+        0 auto 28px;
+
+    color:
+        rgba(255,255,255,0.58);
+
+    font-size:
+        14px;
+
+    line-height:
+        1.7;
+}
+
+
+/* =========================================================
+   CONTACT
+========================================================= */
+
+.contact-section {
+
+    padding:
+        0 0 100px;
+}
+
+
+.contact-card {
+
+    padding:
+        28px;
+
+    height:
+        100%;
+
+    border-radius:
+        20px;
+
+    background:
+        rgba(255,255,255,0.045);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.08);
+}
+
+
+.contact-icon {
+
+    color:
+        #ffc107;
+
+    font-size:
+        25px;
+
+    margin-bottom:
+        13px;
+}
+
+
+.contact-card h6 {
+
+    font-weight:
+        800;
+
+    margin-bottom:
+        7px;
+}
+
+
+.contact-card p {
+
+    color:
+        rgba(255,255,255,0.50);
+
+    font-size:
+        12px;
+
+    line-height:
+        1.6;
+
+    margin:
+        0;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .hero-info-card {
+        display:
+            none;
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .hero-section {
+
+        min-height:
+            auto;
+
+        padding:
+            90px 0 75px;
+    }
+
+
+    .hero-title {
+
+        font-size:
+            clamp(58px, 18vw, 95px);
+
+        letter-spacing:
+            -1px;
+    }
+
+
+    .hero-description {
+
+        font-size:
+            14px;
+
+        max-width:
+            100%;
+    }
+
+
+    .hero-stats {
+
+        gap:
+            18px;
+
+        margin-top:
+            35px;
+    }
+
+
+    .hero-stat {
+
+        min-width:
+            130px;
+    }
+
+
+    .about-section {
+
+        padding:
+            75px 0;
+    }
+
+
+    .timing-section {
+
+        padding:
+            50px 0 75px;
+    }
+
+
+    .cta-section {
+
+        padding-bottom:
+            75px;
+    }
+
+
+    .cta-card {
+
+        padding:
+            50px 20px;
+
+        border-radius:
+            22px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .hero-buttons {
+
+        flex-direction:
+            column;
+    }
+
+
+    .hero-main-btn,
+    .hero-secondary-btn {
+
+        width:
+            100%;
+    }
+
+
+    .hero-stats {
+
+        display:
+            grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap:
+            14px;
+    }
+
+
+    .hero-stat {
+
+        min-width:
+            auto;
+    }
+
+}
+
+</style>
+
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<section class="hero-section">
+
+    <div class="hero-photo"></div>
+
+    <div class="hero-glow-green"></div>
+
+    <div class="hero-glow-gold"></div>
+
+
+    <div class="container">
+
+        <div class="hero-content">
+
+
+            <div class="hero-badge">
+
+                <span class="hero-badge-dot"></span>
+
+                NOW OPEN FOR BOOKINGS
+
+            </div>
+
+
+            <h1 class="hero-title">
+
+                PLAY.
+                <br>
+
+                <span class="gold">
+                    TRAIN.
+                </span>
+
+                <br>
+
+                <span class="outline">
+                    DOMINATE.
+                </span>
+
+            </h1>
+
+
+            <p class="hero-description">
+
+                Experience premium cricket at
+                <strong class="text-white">
+                    7 Cricket Zone
+                </strong>.
+
+                Book your cricket slot online,
+                choose your preferred time and
+                get ready to play your game.
+
+            </p>
+
+
+            <div class="hero-buttons">
+
+                <a
+                    href="{% url 'booking' %}"
+                    class="hero-main-btn"
+                >
+
+                    <i class="bi bi-calendar2-check"></i>
+
+                    BOOK YOUR SLOT
+
+                </a>
+
+
+                <a
+                    href="#about"
+                    class="hero-secondary-btn"
+                >
+
+                    <i class="bi bi-play-circle"></i>
+
+                    EXPLORE TURF
+
+                </a>
+
+            </div>
+
+
+            <div class="hero-stats">
+
+
+                <div class="hero-stat">
+
+                    <div class="hero-stat-icon">
+
+                        <i class="bi bi-clock-history"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            15 MIN
+                        </strong>
+
+                        <small>
+                            Slot System
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="hero-stat">
+
+                    <div class="hero-stat-icon">
+
+                        <i class="bi bi-calendar-check"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            ONLINE
+                        </strong>
+
+                        <small>
+                            Easy Booking
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="hero-stat">
+
+                    <div class="hero-stat-icon">
+
+                        <i class="bi bi-trophy"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            PREMIUM
+                        </strong>
+
+                        <small>
+                            Cricket Experience
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- FLOATING CARD -->
+
+        <div class="hero-info-card">
+
+            <div class="hero-info-label">
+                7 CRICKET ZONE
+            </div>
+
+            <div class="hero-info-title">
+                YOUR GAME. YOUR TURF.
+            </div>
+
+
+            <div class="hero-info-row">
+
+                <i class="bi bi-check-circle-fill"></i>
+
+                Premium Cricket Turf
+
+            </div>
+
+
+            <div class="hero-info-row">
+
+                <i class="bi bi-check-circle-fill"></i>
+
+                Online Slot Booking
+
+            </div>
+
+
+            <div class="hero-info-row">
+
+                <i class="bi bi-check-circle-fill"></i>
+
+                Multiple Ball Options
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     TICKER
+========================================================= -->
+
+<section class="ticker-section">
+
+    <div class="ticker-track">
+
+
+        <div class="ticker-item">
+            <span>🏏</span>
+            BOOK YOUR SLOT
+        </div>
+
+
+        <div class="ticker-item">
+            <span>⚡</span>
+            15 MINUTE SLOTS
+        </div>
+
+
+        <div class="ticker-item">
+            <span>🏆</span>
+            PREMIUM CRICKET EXPERIENCE
+        </div>
+
+
+        <div class="ticker-item">
+            <span>🔥</span>
+            PLAY YOUR GAME
+        </div>
+
+
+        <div class="ticker-item">
+            <span>🏏</span>
+            BOOK YOUR SLOT
+        </div>
+
+
+        <div class="ticker-item">
+            <span>⚡</span>
+            15 MINUTE SLOTS
+        </div>
+
+
+        <div class="ticker-item">
+            <span>🏆</span>
+            PREMIUM CRICKET EXPERIENCE
+        </div>
+
+
+        <div class="ticker-item">
+            <span>🔥</span>
+            PLAY YOUR GAME
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     ABOUT
+========================================================= -->
+
+<section
+    id="about"
+    class="about-section"
+>
+
+    <div class="container">
+
+
+        <div class="text-center mb-5">
+
+            <div class="section-kicker">
+                WHY 7 CRICKET ZONE
+            </div>
+
+            <h2 class="section-title mt-3">
+
+                PLAY LIKE
+                <span>
+                    A PRO
+                </span>
+
+            </h2>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <div class="col-md-4">
+
+                <div class="about-card">
+
+                    <div class="about-icon">
+
+                        <i class="bi bi-lightning-charge-fill"></i>
+
+                    </div>
+
+                    <h4>
+                        PREMIUM TURF
+                    </h4>
+
+                    <p>
+
+                        Train and play in a dedicated
+                        cricket environment designed
+                        for an exciting cricket experience.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="about-card">
+
+                    <div class="about-icon">
+
+                        <i class="bi bi-calendar2-week-fill"></i>
+
+                    </div>
+
+                    <h4>
+                        EASY BOOKING
+                    </h4>
+
+                    <p>
+
+                        Choose your date, time and
+                        playing option with our simple
+                        online booking system.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="about-card">
+
+                    <div class="about-icon">
+
+                        <i class="bi bi-award-fill"></i>
+
+                    </div>
+
+                    <h4>
+                        GAME TIME
+                    </h4>
+
+                    <p>
+
+                        Bring your team, pick your
+                        slot and enjoy your cricket
+                        session at 7 Cricket Zone.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     TIMING
+========================================================= -->
+
+<section
+    id="timing"
+    class="timing-section"
+>
+
+    <div class="container">
+
+
+        <div class="text-center mb-5">
+
+            <div class="section-kicker">
+                AVAILABLE SESSIONS
+            </div>
+
+            <h2 class="section-title mt-3">
+
+                PICK YOUR
+                <span>
+                    TIME
+                </span>
+
+            </h2>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <div class="col-6 col-lg-3">
+
+                <div class="timing-card">
+
+                    <div class="timing-icon">
+
+                        <i class="bi bi-sunrise-fill"></i>
+
+                    </div>
+
+                    <h5>
+                        MORNING
+                    </h5>
+
+                    <p>
+                        Fresh start
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-lg-3">
+
+                <div class="timing-card">
+
+                    <div class="timing-icon">
+
+                        <i class="bi bi-brightness-high-fill"></i>
+
+                    </div>
+
+                    <h5>
+                        AFTERNOON
+                    </h5>
+
+                    <p>
+                        Midday game
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-lg-3">
+
+                <div class="timing-card">
+
+                    <div class="timing-icon">
+
+                        <i class="bi bi-sunset-fill"></i>
+
+                    </div>
+
+                    <h5>
+                        EVENING
+                    </h5>
+
+                    <p>
+                        Prime game time
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-lg-3">
+
+                <div class="timing-card">
+
+                    <div class="timing-icon">
+
+                        <i class="bi bi-moon-stars-fill"></i>
+
+                    </div>
+
+                    <h5>
+                        NIGHT
+                    </h5>
+
+                    <p>
+                        Under the lights
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     CTA
+========================================================= -->
+
+<section class="cta-section">
+
+    <div class="container">
+
+        <div class="cta-card">
+
+            <h2>
+
+                READY TO
+                <span>
+                    PLAY?
+                </span>
+
+            </h2>
+
+            <p>
+
+                Select your preferred date and
+                time slot and get your cricket
+                session booked in minutes.
+
+            </p>
+
+
+            <a
+                href="{% url 'booking' %}"
+                class="hero-main-btn"
+            >
+
+                <i class="bi bi-calendar2-check"></i>
+
+                BOOK YOUR SLOT
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     CONTACT
+========================================================= -->
+
+<section
+    id="contact"
+    class="contact-section"
+>
+
+    <div class="container">
+
+
+        <div class="text-center mb-5">
+
+            <div class="section-kicker">
+                GET IN TOUCH
+            </div>
+
+            <h2 class="section-title mt-3">
+
+                VISIT
+                <span>
+                    US
+                </span>
+
+            </h2>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <div class="col-md-4">
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+
+                        <i class="bi bi-geo-alt-fill"></i>
+
+                    </div>
+
+                    <h6>
+                        LOCATION
+                    </h6>
+
+                    <p>
+
+                        7 Cricket Zone,
+                        Canal Road,
+                        Bhestan, Surat,
+                        Gujarat 394210
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+
+                        <i class="bi bi-calendar-check-fill"></i>
+
+                    </div>
+
+                    <h6>
+                        ONLINE BOOKING
+                    </h6>
+
+                    <p>
+
+                        Book your preferred cricket
+                        session online using our
+                        slot booking system.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="contact-card">
+
+                    <div class="contact-icon">
+
+                        <i class="bi bi-phone-fill"></i>
+
+                    </div>
+
+                    <h6>
+                        SUPPORT
+                    </h6>
+
+                    <p>
+
+                        Contact 7 Cricket Zone
+                        for booking assistance
+                        and enquiries.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+{% endblock %}

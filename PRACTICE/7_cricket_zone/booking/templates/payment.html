@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}
+Payment | 7 Cricket Zone
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="card p-4 text-center">
+
+        <h2>
+            Complete Payment
+        </h2>
+
+        <hr>
+
+        <p>
+            Booking ID:
+            <strong>#{{ booking.id }}</strong>
+        </p>
+
+        <p>
+            Customer:
+            <strong>{{ booking.name }}</strong>
+        </p>
+
+        <p>
+            Date:
+            <strong>{{ booking.date }}</strong>
+        </p>
+
+        <p>
+            Time:
+            <strong>
+                {{ booking.time|time:"h:i A" }}
+            </strong>
+        </p>
+
+        <p>
+            Ball:
+            <strong>{{ booking.ball_type }}</strong>
+        </p>
+
+        <p>
+            Overs:
+            <strong>{{ booking.overs }}</strong>
+        </p>
+
+        <h3>
+            ₹{{ booking.amount }}
+        </h3>
+
+        <button
+            id="pay-button"
+            class="btn btn-warning w-100 mt-3"
+        >
+            PAY NOW
+        </button>
+
+    </div>
+
+</div>
+
+
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+
+<script>
+
+const cashfree = Cashfree({
+    mode: "{{ cashfree_mode }}"
+});
+
+document
+    .getElementById("pay-button")
+    .addEventListener(
+        "click",
+        function () {
+
+            cashfree.checkout({
+
+                paymentSessionId:
+                    "{{ payment_session_id }}",
+
+                redirectTarget:
+                    "_self"
+
+            });
+
+        }
+    );
+
+</script>
+
+{% endblock %}

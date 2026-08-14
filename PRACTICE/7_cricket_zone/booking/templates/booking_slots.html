@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block title %}
+Booking Slots | 7 Cricket Zone
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.booking-slots-page {
+
+    min-height: 90vh;
+
+    padding: 60px 15px 100px;
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(255,193,7,.12),
+            transparent 40%
+        ),
+        #020906;
+
+    color: white;
+}
+
+
+.booking-slots-card {
+
+    max-width: 1200px;
+
+    margin: auto;
+
+    padding: 30px;
+
+    border-radius: 25px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:
+        1px solid
+        rgba(255,255,255,.10);
+
+    box-shadow:
+        0 25px 70px
+        rgba(0,0,0,.40);
+}
+
+
+.booking-header {
+
+    text-align: center;
+
+    margin-bottom: 30px;
+}
+
+
+.booking-header h1 {
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+}
+
+
+.booking-header h1 span {
+
+    color: #ffc107;
+}
+
+
+.booking-header p {
+
+    color:
+        rgba(255,255,255,.55);
+
+    font-size: 13px;
+}
+
+
+.table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+.booking-table {
+
+    width: 100%;
+
+    min-width: 900px;
+
+    border-collapse: separate;
+
+    border-spacing: 0 8px;
+}
+
+
+.booking-table thead th {
+
+    padding: 15px;
+
+    background: #ffc107;
+
+    color: #111;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+
+.booking-table thead th:first-child {
+
+    border-radius:
+        12px 0 0 12px;
+}
+
+
+.booking-table thead th:last-child {
+
+    border-radius:
+        0 12px 12px 0;
+}
+
+
+.booking-table tbody tr {
+
+    background:
+        rgba(255,255,255,.045);
+}
+
+
+.booking-table tbody td {
+
+    padding: 15px;
+
+    color:
+        rgba(255,255,255,.75);
+
+    font-size: 13px;
+
+    border-top:
+        1px solid
+        rgba(255,255,255,.04);
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.04);
+
+    white-space: nowrap;
+}
+
+
+.booking-table tbody tr:hover {
+
+    background:
+        rgba(255,193,7,.07);
+}
+
+
+.booking-table tbody td:first-child {
+
+    border-radius:
+        12px 0 0 12px;
+
+    color: #ffc107;
+
+    font-weight: 900;
+}
+
+
+.booking-table tbody td:last-child {
+
+    border-radius:
+        0 12px 12px 0;
+}
+
+
+.price {
+
+    color: #ffc107 !important;
+
+    font-weight: 900;
+}
+
+
+.ball-badge {
+
+    display: inline-block;
+
+    padding: 6px 10px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(255,193,7,.10);
+
+    border:
+        1px solid
+        rgba(255,193,7,.20);
+
+    color: #ffc107;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+.empty-bookings {
+
+    text-align: center;
+
+    padding: 50px 20px;
+
+    color:
+        rgba(255,255,255,.45);
+}
+
+
+.empty-bookings i {
+
+    font-size: 45px;
+
+    color: #ffc107;
+
+    display: block;
+
+    margin-bottom: 15px;
+}
+
+
+.book-button {
+
+    display: inline-block;
+
+    margin-top: 20px;
+
+    padding: 13px 25px;
+
+    border-radius: 12px;
+
+    background: #ffc107;
+
+    color: #111;
+
+    text-decoration: none;
+
+    font-weight: 900;
+}
+
+</style>
+
+
+<section class="booking-slots-page">
+
+    <div class="container">
+
+        <div class="booking-slots-card">
+
+
+            <div class="booking-header">
+
+                <h1>
+
+                    BOOKING
+
+                    <span>
+                        SLOTS
+                    </span>
+
+                </h1>
+
+                <p>
+                    7 Cricket Zone booked slots
+                </p>
+
+            </div>
+
+
+            {% if bookings %}
+
+                <div class="table-wrapper">
+
+                    <table class="booking-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    ID
+                                </th>
+
+                                <th>
+                                    Name
+                                </th>
+
+                                <th>
+                                    Email
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Timing
+                                </th>
+
+                                <th>
+                                    Ball Type
+                                </th>
+
+                                <th>
+                                    Price
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for booking in bookings %}
+
+                                <tr>
+
+                                    <td>
+                                        #{{ booking.id }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ booking.name }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ booking.email }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ booking.date }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ booking.time|time:"h:i A" }}
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="ball-badge">
+
+                                            {{ booking.ball_type }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td class="price">
+
+                                        ₹{{ booking.amount }}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-bookings">
+
+                    <i class="bi bi-calendar-x"></i>
+
+                    <h4>
+                        No Bookings Yet
+                    </h4>
+
+                    <p>
+                        No successful bookings available.
+                    </p>
+
+
+                    <a
+                        href="{% url 'booking' %}"
+                        class="book-button"
+                    >
+
+                        🏏 BOOK YOUR SLOT
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

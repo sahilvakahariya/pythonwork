@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+Email Test | 7 Cricket Zone
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center">
+
+        <h1 class="fw-bold">
+            EMAIL SENT
+        </h1>
+
+        <p class="text-success">
+            Email system is working successfully.
+        </p>
+
+        <a
+            href="{% url 'home' %}"
+            class="btn btn-warning"
+        >
+            Back To Home
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

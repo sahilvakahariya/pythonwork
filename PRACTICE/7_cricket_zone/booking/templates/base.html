@@ -1,0 +1,1111 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="7 Cricket Zone - Premium Cricket Turf Booking">
+
+    <meta name="theme-color" content="#07110c">
+
+    <title>
+        {% block title %}
+        7 Cricket Zone
+        {% endblock %}
+    </title>
+
+
+    <!-- =====================================================
+         BOOTSTRAP 5
+    ====================================================== -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- =====================================================
+         BOOTSTRAP ICONS
+    ====================================================== -->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+    <!-- =====================================================
+         GOOGLE FONT
+    ====================================================== -->
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+
+    <style>
+        /* =====================================================
+           GLOBAL
+        ====================================================== */
+
+        :root {
+
+            --black:
+                #030605;
+
+            --dark:
+                #07100b;
+
+            --dark-green:
+                #0a1d13;
+
+            --green:
+                #0f6b3a;
+
+            --green-light:
+                #20a35b;
+
+            --gold:
+                #ffc107;
+
+            --gold-light:
+                #ffe082;
+
+            --white:
+                #ffffff;
+
+            --muted:
+                #aeb8b3;
+
+            --glass:
+                rgba(255, 255, 255, 0.055);
+
+            --glass-border:
+                rgba(255, 193, 7, 0.18);
+        }
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            background:
+                radial-gradient(circle at 15% 10%,
+                    rgba(15, 107, 58, 0.20),
+                    transparent 30%),
+                radial-gradient(circle at 85% 20%,
+                    rgba(255, 193, 7, 0.08),
+                    transparent 25%),
+                var(--black);
+
+            color: var(--white);
+
+            font-family:
+                "Inter",
+                sans-serif;
+
+            overflow-x: hidden;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+
+        ::selection {
+            background: var(--gold);
+            color: #000;
+        }
+
+
+        /* =====================================================
+           PAGE BACKGROUND
+        ====================================================== */
+
+        .site-background {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: -10;
+
+            background: linear-gradient(120deg,
+                rgba(0, 0, 0, 0.90),
+                rgba(2, 15, 9, 0.86),
+                rgba(0, 0, 0, 0.94)),
+            url("{% static 'images/lo.png' %}");
+
+            background-size: cover;
+
+            background-position: center;
+
+            background-repeat: no-repeat;
+
+            filter: saturate(0.85);
+
+        }
+
+
+        .site-background::after {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background:
+
+                radial-gradient(circle at 20% 30%,
+                    rgba(21, 157, 87, 0.16),
+                    transparent 28%),
+
+                radial-gradient(circle at 80% 70%,
+                    rgba(255, 193, 7, 0.08),
+                    transparent 25%);
+
+        }
+
+
+        /* =====================================================
+           TOP GLOW
+        ====================================================== */
+
+        .top-glow {
+
+            position: fixed;
+
+            top: -180px;
+
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            width: 650px;
+
+            height: 350px;
+
+            background:
+                radial-gradient(ellipse,
+                    rgba(32, 163, 91, 0.20),
+                    transparent 70%);
+
+            filter: blur(20px);
+
+            pointer-events: none;
+
+            z-index: -5;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ====================================================== */
+
+        .main-navbar {
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 9999;
+
+            background:
+                rgba(3, 6, 5, 0.78);
+
+            backdrop-filter:
+                blur(18px);
+
+            -webkit-backdrop-filter:
+                blur(18px);
+
+            border-bottom:
+                1px solid rgba(255, 193, 7, 0.14);
+
+            box-shadow:
+                0 10px 40px rgba(0, 0, 0, 0.25);
+        }
+
+
+        .navbar-container {
+
+            min-height: 76px;
+        }
+
+
+        /* =====================================================
+           BRAND
+        ====================================================== */
+
+        .brand-logo {
+
+            width: 48px;
+
+            height: 48px;
+
+            object-fit: contain;
+
+            border-radius: 12px;
+
+            background:
+                rgba(255, 255, 255, 0.05);
+
+            padding: 5px;
+
+            border:
+                1px solid rgba(255, 193, 7, 0.25);
+
+            box-shadow:
+                0 0 25px rgba(255, 193, 7, 0.08);
+        }
+
+
+        .brand-text {
+
+            line-height: 1;
+
+            font-family:
+                "Barlow Condensed",
+                sans-serif;
+
+            font-size: 25px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.8px;
+
+            color: var(--white);
+        }
+
+
+        .brand-text span {
+
+            color: var(--gold);
+        }
+
+
+        .brand-subtitle {
+
+            display: block;
+
+            margin-top: 4px;
+
+            font-family:
+                "Inter",
+                sans-serif;
+
+            font-size: 8px;
+
+            letter-spacing: 2.2px;
+
+            color: var(--muted);
+
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           NAV LINKS
+        ====================================================== */
+
+        .nav-link-custom {
+
+            position: relative;
+
+            color:
+                rgba(255, 255, 255, 0.76) !important;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            padding:
+                10px 15px !important;
+
+            transition:
+                all 0.3s ease;
+        }
+
+
+        .nav-link-custom:hover {
+
+            color:
+                var(--gold) !important;
+
+        }
+
+
+        .nav-link-custom::after {
+
+            content: "";
+
+            position: absolute;
+
+            left: 15px;
+
+            right: 15px;
+
+            bottom: 3px;
+
+            height: 2px;
+
+            background:
+                var(--gold);
+
+            transform:
+                scaleX(0);
+
+            transform-origin:
+                center;
+
+            transition:
+                transform 0.3s ease;
+        }
+
+
+        .nav-link-custom:hover::after {
+
+            transform:
+                scaleX(1);
+        }
+
+
+        /* =====================================================
+           BOOK BUTTON
+        ====================================================== */
+
+        .btn-book {
+
+            position: relative;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            padding:
+                11px 20px;
+
+            border-radius:
+                12px;
+
+            border:
+                1px solid var(--gold);
+
+            background:
+                linear-gradient(135deg,
+                    #ffc107,
+                    #ffb300);
+
+            color:
+                #080b09;
+
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+
+            letter-spacing:
+                0.4px;
+
+            box-shadow:
+                0 8px 25px rgba(255, 193, 7, 0.18);
+
+            transition:
+                all 0.3s ease;
+
+            overflow:
+                hidden;
+        }
+
+
+        .btn-book::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+
+            left: -100%;
+
+            width: 60%;
+
+            height: 100%;
+
+            background:
+                linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.45),
+                    transparent);
+
+            transform:
+                skewX(-20deg);
+
+            transition:
+                left 0.5s ease;
+        }
+
+
+        .btn-book:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 12px 35px rgba(255, 193, 7, 0.30);
+
+            color:
+                #000;
+        }
+
+
+        .btn-book:hover::before {
+
+            left: 130%;
+        }
+
+
+        /* =====================================================
+           MOBILE NAVBAR
+        ====================================================== */
+
+        .navbar-toggler {
+
+            border:
+                1px solid rgba(255, 193, 7, 0.3);
+
+            border-radius:
+                10px;
+
+            padding:
+                8px 10px;
+        }
+
+
+        .navbar-toggler:focus {
+
+            box-shadow:
+                0 0 0 3px rgba(255, 193, 7, 0.12);
+        }
+
+
+        .navbar-toggler-icon {
+
+            filter:
+                invert(1);
+        }
+
+
+        /* =====================================================
+           MAIN CONTENT
+        ====================================================== */
+
+        main {
+
+            min-height:
+                calc(100vh - 76px);
+        }
+
+
+        /* =====================================================
+           COMMON GLASS CARD
+        ====================================================== */
+
+        .glass-card {
+
+            background:
+                rgba(255, 255, 255, 0.055);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.10);
+
+            backdrop-filter:
+                blur(18px);
+
+            -webkit-backdrop-filter:
+                blur(18px);
+
+            border-radius:
+                22px;
+
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, 0.30);
+        }
+
+
+        /* =====================================================
+           SECTION TITLE
+        ====================================================== */
+
+        .section-kicker {
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                8px;
+
+            color:
+                var(--gold);
+
+            font-size:
+                12px;
+
+            font-weight:
+                800;
+
+            letter-spacing:
+                2px;
+
+            text-transform:
+                uppercase;
+        }
+
+
+        .section-kicker::before {
+
+            content: "";
+
+            width:
+                25px;
+
+            height:
+                2px;
+
+            background:
+                var(--gold);
+
+            border-radius:
+                10px;
+        }
+
+
+        .section-title {
+
+            font-family:
+                "Barlow Condensed",
+                sans-serif;
+
+            font-size:
+                clamp(38px, 6vw, 68px);
+
+            font-weight:
+                900;
+
+            line-height:
+                0.95;
+
+            text-transform:
+                uppercase;
+        }
+
+
+        .section-title span {
+
+            color:
+                var(--gold);
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ====================================================== */
+
+        .main-footer {
+
+            border-top:
+                1px solid rgba(255, 193, 7, 0.12);
+
+            background:
+                rgba(0, 0, 0, 0.55);
+
+            backdrop-filter:
+                blur(15px);
+        }
+
+
+        .footer-brand {
+
+            font-family:
+                "Barlow Condensed",
+                sans-serif;
+
+            font-size:
+                27px;
+
+            font-weight:
+                800;
+        }
+
+
+        .footer-brand span {
+
+            color:
+                var(--gold);
+        }
+
+
+        .footer-text {
+
+            color:
+                var(--muted);
+
+            font-size:
+                13px;
+
+            line-height:
+                1.8;
+        }
+
+
+        .footer-link {
+
+            color:
+                var(--muted);
+
+            transition:
+                color 0.25s ease;
+        }
+
+
+        .footer-link:hover {
+
+            color:
+                var(--gold);
+        }
+
+
+        .copyright {
+
+            border-top:
+                1px solid rgba(255, 255, 255, 0.06);
+
+            color:
+                rgba(255, 255, 255, 0.45);
+
+            font-size:
+                12px;
+        }
+
+
+        /* =====================================================
+           SCROLLBAR
+        ====================================================== */
+
+        ::-webkit-scrollbar {
+
+            width:
+                7px;
+        }
+
+
+        ::-webkit-scrollbar-track {
+
+            background:
+                #030605;
+        }
+
+
+        ::-webkit-scrollbar-thumb {
+
+            background:
+                linear-gradient(var(--green),
+                    var(--gold));
+
+            border-radius:
+                20px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media (max-width: 991px) {
+
+            .navbar-collapse {
+
+                margin-top:
+                    15px;
+
+                padding:
+                    15px;
+
+                border-radius:
+                    16px;
+
+                background:
+                    rgba(5, 10, 7, 0.96);
+
+                border:
+                    1px solid rgba(255, 193, 7, 0.12);
+            }
+
+
+            .nav-link-custom {
+
+                padding:
+                    12px 10px !important;
+            }
+
+
+            .nav-link-custom::after {
+
+                display:
+                    none;
+            }
+
+
+            .navbar-book-mobile {
+
+                margin-top:
+                    10px;
+            }
+
+        }
+
+
+        @media (max-width: 576px) {
+
+            .navbar-container {
+
+                min-height:
+                    68px;
+            }
+
+
+            .brand-logo {
+
+                width:
+                    42px;
+
+                height:
+                    42px;
+            }
+
+
+            .brand-text {
+
+                font-size:
+                    21px;
+            }
+
+
+            .brand-subtitle {
+
+                font-size:
+                    7px;
+
+                letter-spacing:
+                    1.7px;
+            }
+
+
+            .site-background {
+
+                background-position:
+                    58% center;
+            }
+
+        }
+    </style>
+
+
+    {% block extra_css %}
+    {% endblock %}
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         BACKGROUND
+    ====================================================== -->
+
+    <div class="site-background"></div>
+
+    <div class="top-glow"></div>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
+
+    <nav class="navbar navbar-expand-lg main-navbar">
+
+        <div class="container navbar-container">
+
+
+            <!-- BRAND -->
+
+            <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center gap-2">
+
+                <img src="{% static 'images/lo.png' %}" alt="7 Cricket Zone Logo" class="brand-logo">
+
+                <div>
+
+                    <div class="brand-text">
+                        7 <span>CRICKET</span> ZONE
+                    </div>
+
+                    <small class="brand-subtitle">
+                        PREMIUM CRICKET TURF
+                    </small>
+
+                </div>
+
+            </a>
+
+
+            <!-- MOBILE BUTTON -->
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+
+            <!-- NAVIGATION -->
+
+            <div class="collapse navbar-collapse" id="mainNavbar">
+
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+
+
+                    <li class="nav-item">
+
+                        <a class="nav-link nav-link-custom" href="{% url 'home' %}">
+                            <i class="bi bi-house-door me-1"></i>
+                            Home
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a class="nav-link nav-link-custom" href="#about">
+                            <i class="bi bi-stars me-1"></i>
+                            About
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a class="nav-link nav-link-custom" href="#timing">
+                            <i class="bi bi-clock me-1"></i>
+                            Timing
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{% url 'booking' %}">
+                            Book Your Slot
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a class="nav-link nav-link-custom" href="#contact">
+                            <i class="bi bi-telephone me-1"></i>
+                            Contact
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item navbar-book-mobile ms-lg-2">
+
+                        <a href="{% url 'booking' %}" class="btn-book">
+
+                            <i class="bi bi-calendar2-check"></i>
+
+                            BOOK YOUR SLOT
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main>
+
+        {% block content %}
+
+        {% endblock %}
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="main-footer mt-5">
+
+        <div class="container py-5">
+
+            <div class="row g-4">
+
+
+                <div class="col-lg-5">
+
+                    <div class="footer-brand">
+                        7 <span>CRICKET</span> ZONE
+                    </div>
+
+                    <p class="footer-text mt-3 mb-0">
+
+                        Your premium destination for
+                        cricket practice, matches and
+                        unforgettable cricket sessions.
+
+                    </p>
+
+                </div>
+
+
+                <div class="col-6 col-lg-3">
+
+                    <h6 class="fw-bold mb-3">
+                        QUICK LINKS
+                    </h6>
+
+                    <div class="d-flex flex-column gap-2">
+
+                        <a href="{% url 'home' %}" class="footer-link">
+                            Home
+                        </a>
+
+                        <a href="{% url 'booking' %}" class="footer-link">
+                            Book Your Slot
+                        </a>
+
+                        <a href="#timing" class="footer-link">
+                            Timing
+                        </a>
+
+                        <a href="#contact" class="footer-link">
+                            Contact
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-lg-4">
+
+                    <h6 class="fw-bold mb-3">
+                        CONTACT
+                    </h6>
+
+                    <div class="footer-text">
+
+                        <div class="mb-2">
+
+                            <i class="bi bi-geo-alt-fill text-warning me-2"></i>
+
+                            Surat, Gujarat
+
+                        </div>
+
+
+                        <div class="mb-2">
+
+                            <i class="bi bi-whatsapp text-warning me-2"></i>
+
+                            7 Cricket Zone
+
+                        </div>
+
+
+                        <div>
+
+                            <i class="bi bi-envelope-fill text-warning me-2"></i>
+
+                            Booking Support
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="copyright">
+
+            <div class="container py-3 text-center">
+
+                © {% now "Y" %}
+                7 Cricket Zone.
+                All Rights Reserved.
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =====================================================
+         BOOTSTRAP JS
+    ====================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
+    {% block extra_js %}
+    {% endblock %}
+
+
+</body>
+
+</html>
