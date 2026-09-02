@@ -10,7 +10,7 @@ Payment | 7 Cricket Zone
 
 .payment-page {
     min-height: 90vh;
-    padding: 50px 15px;
+    padding: 50px 15px 80px;
 
     background:
         radial-gradient(
@@ -21,11 +21,16 @@ Payment | 7 Cricket Zone
         #020906;
 
     color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .payment-card {
-    max-width: 600px;
-    margin: auto;
+    width: 100%;
+    max-width: 620px;
+
     padding: 35px 25px;
 
     border-radius: 25px;
@@ -36,10 +41,13 @@ Payment | 7 Cricket Zone
 
     text-align: center;
 
-    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.45);
 }
 
 .payment-card h1 {
+    margin-bottom: 8px;
+    font-size: 32px;
     font-weight: 900;
 }
 
@@ -48,27 +56,86 @@ Payment | 7 Cricket Zone
 }
 
 .payment-card > p {
-    color: rgba(255,255,255,.70);
+    color: rgba(255,255,255,.65);
+    margin-bottom: 25px;
 }
+
+
+/* BOOKING DETAILS */
 
 .booking-info {
     margin: 25px 0;
+
     padding: 20px;
 
     border-radius: 18px;
 
-    background: rgba(255,255,255,.05);
+    background: rgba(0,0,0,.25);
+
+    border: 1px solid rgba(255,255,255,.08);
 
     text-align: left;
 }
 
 .booking-info p {
-    margin-bottom: 8px;
-    color: rgba(255,255,255,.75);
+    margin-bottom: 10px;
+
+    padding-bottom: 9px;
+
+    border-bottom: 1px solid rgba(255,255,255,.07);
+
+    color: rgba(255,255,255,.65);
+}
+
+.booking-info p:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
 }
 
 .booking-info strong {
+    float: right;
     color: white;
+}
+
+
+/* AMOUNT */
+
+.amount-row {
+    margin-top: 15px !important;
+
+    padding: 15px !important;
+
+    border: 1px solid rgba(255,193,7,.25) !important;
+
+    border-radius: 12px;
+
+    background: rgba(255,193,7,.06);
+}
+
+.amount-row strong {
+    color: #ffc107;
+    font-size: 22px;
+}
+
+
+/* QR */
+
+.qr-heading {
+    margin-top: 25px;
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+.qr-subtitle {
+    color: rgba(255,255,255,.55);
+
+    font-size: 14px;
+
+    margin-bottom: 10px;
 }
 
 .qr-box {
@@ -80,33 +147,56 @@ Payment | 7 Cricket Zone
 
     border-radius: 20px;
 
-    margin: 20px 0;
+    margin: 15px 0;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.35);
 }
 
 .qr-box img {
     width: 260px;
+
     max-width: 100%;
+
     display: block;
+
+    border-radius: 5px;
+}
+
+
+/* UPI */
+
+.pay-to {
+    margin-top: 5px;
+
+    color: rgba(255,255,255,.55);
+
+    font-size: 14px;
 }
 
 .upi-id {
     color: #ffc107;
 
-    font-weight: 800;
+    font-weight: 900;
 
     font-size: 18px;
 
     margin-top: 5px;
+
+    word-break: break-all;
 }
+
+
+/* OPEN UPI */
 
 .pay-button {
     display: block;
 
     width: 100%;
 
-    margin-top: 20px;
+    margin-top: 22px;
 
-    padding: 15px;
+    padding: 16px;
 
     border-radius: 14px;
 
@@ -118,30 +208,112 @@ Payment | 7 Cricket Zone
 
     font-weight: 900;
 
+    font-size: 17px;
+
     transition: .3s;
+
+    box-sizing: border-box;
 }
 
 .pay-button:hover {
     background: #ffca2c;
+
     color: #111;
 
     transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(255,193,7,.20);
 }
 
+
+/* STATUS */
+
+.payment-status {
+    margin-top: 22px;
+
+    padding: 16px;
+
+    border-radius: 14px;
+
+    background: rgba(255,193,7,.07);
+
+    border: 1px solid rgba(255,193,7,.20);
+}
+
+.status-title {
+    color: #ffc107;
+
+    font-weight: 800;
+
+    font-size: 15px;
+}
+
+.status-text {
+    margin-top: 6px;
+
+    color: rgba(255,255,255,.60);
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* SECURITY NOTE */
+
 .note {
-    margin-top: 20px;
+    margin-top: 15px;
 
     padding: 15px;
 
     border-radius: 14px;
 
-    background: rgba(255,193,7,.08);
+    background: rgba(255,255,255,.03);
 
-    border: 1px solid rgba(255,193,7,.20);
+    border: 1px solid rgba(255,255,255,.07);
 
-    color: rgba(255,255,255,.60);
+    color: rgba(255,255,255,.50);
 
-    font-size: 13px;
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .payment-page {
+        padding: 30px 12px 60px;
+    }
+
+    .payment-card {
+        padding: 28px 16px;
+    }
+
+    .payment-card h1 {
+        font-size: 27px;
+    }
+
+    .booking-info {
+        padding: 16px;
+    }
+
+    .booking-info p {
+        font-size: 14px;
+    }
+
+    .booking-info strong {
+        max-width: 55%;
+        text-align: right;
+    }
+
+    .qr-box img {
+        width: 220px;
+    }
+
 }
 
 </style>
@@ -150,6 +322,7 @@ Payment | 7 Cricket Zone
 <section class="payment-page">
 
     <div class="payment-card">
+
 
         <!-- TITLE -->
 
@@ -169,41 +342,64 @@ Payment | 7 Cricket Zone
 
             <p>
                 Booking ID:
-                <strong>#{{ booking.id }}</strong>
+                <strong>
+                    #{{ booking.id }}
+                </strong>
             </p>
 
             <p>
                 Customer:
-                <strong>{{ booking.name }}</strong>
+                <strong>
+                    {{ booking.name }}
+                </strong>
             </p>
 
             <p>
                 Date:
-                <strong>{{ booking.date }}</strong>
+                <strong>
+                    {{ booking.date|date:"d-m-Y" }}
+                </strong>
             </p>
 
             <p>
                 Time:
                 <strong>
-                    {{ booking.time|time:"h:i A" }}
+                    {{ booking.time }}
                 </strong>
             </p>
 
             <p>
                 Ball:
-                <strong>{{ booking.ball_type }}</strong>
+                <strong>
+                    {{ booking.ball_type }}
+                </strong>
             </p>
 
             <p>
                 Overs:
-                <strong>{{ booking.overs }}</strong>
+                <strong>
+                    {{ booking.overs }} Overs
+                </strong>
             </p>
 
-            <p>
-                Amount:
-                <strong>₹{{ booking.amount }}</strong>
+            <p class="amount-row">
+                Total Amount:
+                <strong>
+                    ₹{{ booking.amount }}
+                </strong>
             </p>
 
+        </div>
+
+
+        <!-- QR TITLE -->
+
+        <div class="qr-heading">
+            📱 Scan & Pay
+        </div>
+
+        <div class="qr-subtitle">
+            Pay exactly ₹{{ booking.amount }}
         </div>
 
 
@@ -211,18 +407,29 @@ Payment | 7 Cricket Zone
 
         <div class="qr-box">
 
-            <img
-                src="data:image/png;base64,{{ qr_code }}"
-                alt="UPI Payment QR"
-            >
+            {% if qr_code %}
+
+                <img
+                    src="data:image/png;base64,{{ qr_code }}"
+                    alt="UPI Payment QR"
+                >
+
+            {% else %}
+
+                <img
+                    src="/static/images/payment_qr.png"
+                    alt="UPI Payment QR"
+                >
+
+            {% endif %}
 
         </div>
 
 
         <!-- UPI ID -->
 
-        <div>
-            Pay to:
+        <div class="pay-to">
+            Pay to UPI ID
         </div>
 
         <div class="upi-id">
@@ -232,28 +439,61 @@ Payment | 7 Cricket Zone
 
         <!-- OPEN UPI APP -->
 
-        <a
-            href="{{ upi_url }}"
-            class="pay-button"
-        >
-            📱 OPEN UPI APP
-        </a>
+        {% if upi_url %}
+
+            <a
+                href="{{ upi_url }}"
+                class="pay-button"
+            >
+                📱 OPEN UPI APP
+            </a>
+
+        {% endif %}
 
 
-        <!-- INFORMATION -->
+        <!-- PAYMENT STATUS -->
+
+        <div class="payment-status">
+
+            <div class="status-title">
+                ⏳ Payment Verification
+            </div>
+
+            <div class="status-text">
+
+                Complete the payment using
+                Google Pay, PhonePe, Paytm
+                or any UPI app.
+
+                <br>
+
+                Your booking receipt will be
+                sent to your registered email
+                after successful payment verification.
+
+            </div>
+
+        </div>
+
+
+        <!-- NOTE -->
 
         <div class="note">
 
-            🔒 Complete your payment using
-            Google Pay, PhonePe, Paytm or any UPI app.
+            🔒 Please pay only the displayed amount.
 
-            <br><br>
+            <br>
 
-            After successful payment verification,
-            your receipt will be sent to your email
-            and you will be redirected to the Home page.
+            Booking ID:
+            <b>#{{ booking.id }}</b>
+
+            <br>
+
+            Registered Email:
+            <b>{{ booking.email }}</b>
 
         </div>
+
 
     </div>
 

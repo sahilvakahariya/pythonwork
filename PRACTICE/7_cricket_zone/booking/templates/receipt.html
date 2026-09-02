@@ -1,0 +1,1209 @@
+{% extends "base.html" %}
+
+{% block title %}
+Booking Receipt | 7 Cricket Zone
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+/* =====================================================
+   PREMIUM RECEIPT PAGE
+===================================================== */
+
+.receipt-page {
+    min-height: calc(100vh - 76px);
+    padding: 50px 15px 90px;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(255, 193, 7, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(255, 193, 7, 0.08),
+            transparent 30%
+        ),
+        #070908;
+}
+
+
+/* =====================================================
+   RECEIPT CARD
+===================================================== */
+
+.receipt-card {
+    max-width: 900px;
+    margin: auto;
+
+    background: rgba(255,255,255,.045);
+
+    border: 1px solid rgba(255,193,7,.25);
+
+    border-radius: 24px;
+
+    overflow: hidden;
+
+    backdrop-filter: blur(20px);
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.45);
+}
+
+
+/* GOLD TOP BORDER */
+
+.receipt-top-line {
+    height: 4px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #ffc107,
+            #ffb300,
+            #ffc107,
+            transparent
+        );
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.receipt-header {
+    padding: 38px 25px 30px;
+
+    text-align: center;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.08);
+}
+
+
+.receipt-icon {
+    width: 65px;
+    height: 65px;
+
+    margin: 0 auto 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: #ffc107;
+
+    background: rgba(255,193,7,.10);
+
+    border:
+        1px solid rgba(255,193,7,.30);
+
+    font-size: 28px;
+}
+
+
+.receipt-header h1 {
+    margin: 0;
+
+    color: white;
+
+    font-size: 40px;
+
+    font-weight: 900;
+}
+
+
+.receipt-header h1 span {
+    color: #ffc107;
+}
+
+
+.receipt-header p {
+    margin-top: 8px;
+
+    color: #929b96;
+
+    font-size: 13px;
+
+    letter-spacing: 2px;
+}
+
+
+/* =====================================================
+   STATUS BADGE
+===================================================== */
+
+.status-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 15px;
+
+    padding: 9px 18px;
+
+    border-radius: 50px;
+
+    font-size: 11px;
+
+    font-weight: 900;
+
+    letter-spacing: .8px;
+}
+
+
+.status-success {
+    color: #55ef9a;
+
+    background: rgba(25,135,84,.14);
+
+    border:
+        1px solid rgba(25,135,84,.40);
+}
+
+
+.status-pending {
+    color: #ffc107;
+
+    background: rgba(255,193,7,.10);
+
+    border:
+        1px solid rgba(255,193,7,.30);
+}
+
+
+.status-failed {
+    color: #ff7070;
+
+    background: rgba(220,53,69,.10);
+
+    border:
+        1px solid rgba(220,53,69,.30);
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+.receipt-body {
+    padding: 30px;
+}
+
+
+/* =====================================================
+   BOOKING REFERENCE
+===================================================== */
+
+.reference-box {
+
+    padding: 18px 20px;
+
+    margin-bottom: 22px;
+
+    border-radius: 16px;
+
+    background: rgba(255,193,7,.055);
+
+    border:
+        1px solid rgba(255,193,7,.18);
+}
+
+
+.reference-label {
+    color: #777f7b;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+}
+
+
+.reference-id {
+    color: #ffc107;
+
+    font-size: 22px;
+
+    font-weight: 900;
+}
+
+
+.reference-date {
+    color: #fff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   SECTION
+===================================================== */
+
+.receipt-section {
+
+    padding: 23px;
+
+    margin-bottom: 20px;
+
+    border-radius: 18px;
+
+    background: rgba(0,0,0,.22);
+
+    border:
+        1px solid rgba(255,255,255,.07);
+}
+
+
+.section-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-bottom: 20px;
+
+    color: #ffc107;
+
+    font-size: 16px;
+
+    font-weight: 800;
+}
+
+
+.section-title i {
+    font-size: 18px;
+}
+
+
+/* =====================================================
+   INFO ITEM
+===================================================== */
+
+.info-item {
+
+    padding: 13px 0;
+
+    border-bottom:
+        1px dashed rgba(255,255,255,.08);
+}
+
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+
+.info-label {
+
+    margin-bottom: 5px;
+
+    color: #737c77;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+}
+
+
+.info-value {
+
+    color: #fff;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    word-break: break-word;
+}
+
+
+.info-value i {
+    color: #ffc107;
+
+    margin-right: 5px;
+}
+
+
+/* =====================================================
+   PAYMENT
+===================================================== */
+
+.payment-box {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 28px 20px;
+
+    margin-top: 20px;
+
+    text-align: center;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,193,7,.11),
+            rgba(255,193,7,.025)
+        );
+
+    border:
+        1px solid rgba(255,193,7,.28);
+}
+
+
+.payment-title {
+
+    color: #929b96;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+}
+
+
+.payment-amount {
+
+    color: #ffc107;
+
+    font-size: 46px;
+
+    font-weight: 900;
+
+    margin: 3px 0;
+}
+
+
+.payment-method {
+
+    color: #fff;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   PAYMENT STATUS
+===================================================== */
+
+.success-text {
+    color: #55ef9a;
+
+    font-weight: 800;
+}
+
+
+.pending-text {
+    color: #ffc107;
+
+    font-weight: 800;
+}
+
+
+.failed-text {
+    color: #ff7070;
+
+    font-weight: 800;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.receipt-footer {
+
+    text-align: center;
+
+    padding: 10px 10px 5px;
+
+    color: #707974;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+.receipt-footer strong {
+    color: #ffc107;
+}
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.receipt-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-top: 25px;
+
+    flex-wrap: wrap;
+}
+
+
+.receipt-btn {
+
+    min-width: 165px;
+
+    padding: 12px 20px;
+
+    border-radius: 10px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    transition: .3s;
+}
+
+
+.home-btn {
+
+    color: #000;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffc107,
+            #ffb300
+        );
+}
+
+
+.home-btn:hover {
+
+    color: #000;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(255,193,7,.20);
+}
+
+
+.bookings-btn {
+
+    color: #fff;
+
+    background: rgba(255,255,255,.055);
+
+    border:
+        1px solid rgba(255,255,255,.14);
+}
+
+
+.bookings-btn:hover {
+
+    color: #fff;
+
+    transform: translateY(-2px);
+
+    background: rgba(255,255,255,.09);
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width: 767px) {
+
+    .receipt-page {
+        padding: 30px 12px 60px;
+    }
+
+    .receipt-header {
+        padding: 30px 18px 25px;
+    }
+
+    .receipt-header h1 {
+        font-size: 32px;
+    }
+
+    .receipt-body {
+        padding: 18px;
+    }
+
+    .receipt-section {
+        padding: 18px;
+    }
+
+    .payment-amount {
+        font-size: 38px;
+    }
+
+    .receipt-btn {
+        width: 100%;
+    }
+
+}
+
+
+/* =====================================================
+   PRINT
+===================================================== */
+
+@media print {
+
+    .receipt-page {
+        background: white !important;
+        padding: 0;
+    }
+
+    .receipt-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        background: white;
+    }
+
+    .receipt-header h1,
+    .info-value {
+        color: #111 !important;
+    }
+
+    .receipt-section {
+        background: white;
+        border: 1px solid #ddd;
+    }
+
+    .receipt-buttons {
+        display: none;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<section class="receipt-page">
+
+<div class="container">
+
+<div class="receipt-card">
+
+    <div class="receipt-top-line"></div>
+
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
+    <div class="receipt-header">
+
+        <div class="receipt-icon">
+
+            <i class="bi bi-trophy-fill"></i>
+
+        </div>
+
+
+        <h1>
+
+            Booking
+            <span>Receipt</span>
+
+        </h1>
+
+
+        <p>
+
+            7 CRICKET ZONE
+
+        </p>
+
+
+        {% if booking.payment_status == "Success" %}
+
+            <div class="status-badge status-success">
+
+                <i class="bi bi-check-circle-fill"></i>
+
+                ONLINE PAYMENT SUCCESSFUL
+
+            </div>
+
+        {% elif booking.payment_status == "Cash" %}
+
+            <div class="status-badge status-pending">
+
+                <i class="bi bi-cash-stack"></i>
+
+                CASH PAYMENT
+
+            </div>
+
+        {% elif booking.payment_status == "Failed" %}
+
+            <div class="status-badge status-failed">
+
+                <i class="bi bi-x-circle-fill"></i>
+
+                PAYMENT FAILED
+
+            </div>
+
+        {% else %}
+
+            <div class="status-badge status-pending">
+
+                <i class="bi bi-clock-fill"></i>
+
+                PAYMENT PENDING
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+
+    <!-- =================================================
+         BODY
+    ================================================== -->
+
+    <div class="receipt-body">
+
+
+        <!-- BOOKING REFERENCE -->
+
+        <div class="reference-box">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-6">
+
+                    <div class="reference-label">
+
+                        Booking Reference
+
+                    </div>
+
+                    <div class="reference-id">
+
+                        #{{ booking.id }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+
+                    <div class="reference-label">
+
+                        Booked On
+
+                    </div>
+
+                    <div class="reference-date">
+
+                        {{ booking.created_at|date:"d M Y, h:i A" }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             BOOKING DETAILS
+        ================================================== -->
+
+        <div class="receipt-section">
+
+            <div class="section-title">
+
+                <i class="bi bi-calendar-check-fill"></i>
+
+                Booking Details
+
+            </div>
+
+
+            <div class="row g-3">
+
+
+                <div class="col-md-6">
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+
+                            Booking Date
+
+                        </div>
+
+                        <div class="info-value">
+
+                            <i class="bi bi-calendar3"></i>
+
+                            {{ booking.date|date:"d M Y" }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+
+                            Time Slot
+
+                        </div>
+
+                        <div class="info-value">
+
+                            <i class="bi bi-clock"></i>
+
+                            {{ booking.time }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+
+                            Ball Type
+
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ booking.ball_type }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+
+                            Playing Duration
+
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ booking.overs }} Overs
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             CUSTOMER DETAILS
+        ================================================== -->
+
+        <div class="receipt-section">
+
+            <div class="section-title">
+
+                <i class="bi bi-person-fill"></i>
+
+                Customer Details
+
+            </div>
+
+
+            <div class="row g-3">
+
+
+                <div class="col-md-4">
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+
+                            Name
+
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ booking.name }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+
+                            Email
+
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ booking.email }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+
+                            Mobile
+
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ booking.mobile }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PAYMENT DETAILS
+        ================================================== -->
+
+        <div class="receipt-section">
+
+            <div class="section-title">
+
+                <i class="bi bi-credit-card-2-front-fill"></i>
+
+                Payment Details
+
+            </div>
+
+
+            <div class="row g-3">
+
+
+                <div class="col-md-6">
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+
+                            Payment Method
+
+                        </div>
+
+                        <div class="info-value">
+
+                            {% if booking.payment_method == "Online" %}
+
+                                <i class="bi bi-phone-fill"></i>
+
+                                Online / Razorpay
+
+                            {% elif booking.payment_method == "Cash" %}
+
+                                <i class="bi bi-cash-stack"></i>
+
+                                Cash
+
+                            {% else %}
+
+                                {{ booking.payment_method }}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+
+                            Payment Status
+
+                        </div>
+
+                        <div class="info-value">
+
+                            {% if booking.payment_status == "Success" %}
+
+                                <span class="success-text">
+
+                                    <i class="bi bi-check-circle-fill"></i>
+
+                                    SUCCESS
+
+                                </span>
+
+                            {% elif booking.payment_status == "Pending" %}
+
+                                <span class="pending-text">
+
+                                    <i class="bi bi-clock-fill"></i>
+
+                                    PENDING
+
+                                </span>
+
+                            {% elif booking.payment_status == "Failed" %}
+
+                                <span class="failed-text">
+
+                                    <i class="bi bi-x-circle-fill"></i>
+
+                                    FAILED
+
+                                </span>
+
+                            {% elif booking.payment_status == "Cash" %}
+
+                                <span class="pending-text">
+
+                                    <i class="bi bi-cash-stack"></i>
+
+                                    CASH
+
+                                </span>
+
+                            {% else %}
+
+                                {{ booking.payment_status }}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 TOTAL AMOUNT
+            ================================================== -->
+
+            <div class="payment-box">
+
+                <div class="payment-title">
+
+                    TOTAL BOOKING AMOUNT
+
+                </div>
+
+
+                <div class="payment-amount">
+
+                    ₹{{ booking.amount }}
+
+                </div>
+
+
+                <div class="payment-method">
+
+                    {% if booking.payment_status == "Success" %}
+
+                        <span class="success-text">
+
+                            <i class="bi bi-shield-check"></i>
+
+                            Payment verified successfully
+
+                        </span>
+
+                    {% elif booking.payment_status == "Pending" %}
+
+                        <span class="pending-text">
+
+                            <i class="bi bi-hourglass-split"></i>
+
+                            Payment is pending
+
+                        </span>
+
+                    {% elif booking.payment_status == "Cash" %}
+
+                        <span class="pending-text">
+
+                            <i class="bi bi-cash"></i>
+
+                            Cash payment
+
+                        </span>
+
+                    {% else %}
+
+                        Payment Status:
+                        {{ booking.payment_status }}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <div class="receipt-footer">
+
+            Thank you for choosing
+
+            <strong>7 Cricket Zone</strong> 🏏
+
+            <br>
+
+            Please keep this receipt for your booking reference.
+
+        </div>
+
+
+
+        <!-- =================================================
+             BUTTONS
+        ================================================== -->
+
+        <div class="receipt-buttons">
+
+            <a
+                href="{% url 'home' %}"
+                class="receipt-btn home-btn"
+            >
+
+                <i class="bi bi-house-fill"></i>
+
+                BACK TO HOME
+
+            </a>
+
+
+            <a
+                href="{% url 'my_bookings' %}"
+                class="receipt-btn bookings-btn"
+            >
+
+                <i class="bi bi-calendar2-check-fill"></i>
+
+                MY BOOKINGS
+
+            </a>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+</div>
+
+</section>
+
+{% endblock %}

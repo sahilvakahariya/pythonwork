@@ -3,13 +3,19 @@ from django.db import models
 
 class Booking(models.Model):
 
-    PAYMENT_STATUS_CHOICES = [
-        ("Pending", "Pending"),
-        ("Success", "Success"),
-        ("Failed", "Failed"),
-    ]
+    PAYMENT_METHODS = (
+        ("Cash", "Cash"),
+        ("Online", "Online"),
+    )
 
-    name = models.CharField(max_length=150)
+    PAYMENT_STATUS = (
+        ("Pending", "Pending"),
+        ("Success", "Online Payment Successful"),
+        ("Cash", "Cash"),
+        ("Failed", "Failed"),
+    )
+
+    name = models.CharField(max_length=100)
 
     email = models.EmailField()
 
@@ -17,7 +23,7 @@ class Booking(models.Model):
 
     date = models.DateField()
 
-    time = models.TimeField()
+    time = models.CharField(max_length=20)
 
     ball_type = models.CharField(max_length=50)
 
@@ -25,17 +31,16 @@ class Booking(models.Model):
 
     amount = models.IntegerField()
 
-    payment_status = models.CharField(
+    payment_method = models.CharField(
         max_length=20,
-        choices=PAYMENT_STATUS_CHOICES,
-        default="Pending"
+        choices=PAYMENT_METHODS,
+        default="Cash"
     )
 
-    cashfree_order_id = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        unique=True
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS,
+        default="Pending"
     )
 
     created_at = models.DateTimeField(
@@ -43,4 +48,4 @@ class Booking(models.Model):
     )
 
     def __str__(self):
-        return f"#{self.id} - {self.name} - {self.date} - {self.time}"
+        return f"{self.name} - {self.date} - {self.time}"

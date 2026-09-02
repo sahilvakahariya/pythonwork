@@ -1,0 +1,825 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Online Payment - 7 Cricket Zone
+    </title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #111111;
+            color: white;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 20px;
+        }
+
+        .payment-container {
+            width: 100%;
+            max-width: 700px;
+
+            background: #1c1c1c;
+
+            border-radius: 20px;
+
+            padding: 45px 30px;
+
+            text-align: center;
+
+            box-shadow:
+                0 10px 40px
+                rgba(0, 0, 0, 0.45);
+        }
+
+        .payment-title {
+            font-size: 32px;
+            font-weight: 700;
+
+            color: #ffffff;
+
+            margin-bottom: 12px;
+        }
+
+        .payment-subtitle {
+            color: #bbbbbb;
+
+            font-size: 18px;
+
+            margin-bottom: 25px;
+        }
+
+        .booking-id {
+            color: #aaaaaa;
+
+            font-size: 15px;
+
+            margin-bottom: 15px;
+        }
+
+        .booking-id strong {
+            color: #ffc107;
+        }
+
+        .amount {
+            font-size: 52px;
+
+            font-weight: 800;
+
+            color: #ffc107;
+
+            margin-bottom: 30px;
+        }
+
+        .pay-btn {
+            width: 100%;
+
+            height: 72px;
+
+            border: none;
+
+            border-radius: 15px;
+
+            background: #ffc107;
+
+            color: #000000;
+
+            font-size: 24px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: all 0.25s ease;
+        }
+
+        .pay-btn:hover {
+            background: #ffca28;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 20px
+                rgba(255, 193, 7, 0.25);
+        }
+
+        .secure-text {
+            margin-top: 30px;
+
+            color: #cfcfcf;
+
+            font-size: 17px;
+
+            line-height: 1.7;
+        }
+
+        .secure-text strong {
+            color: #ffc107;
+        }
+
+
+        /* =================================================
+           QR MODAL
+        ================================================= */
+
+        .qr-modal {
+
+            display: none;
+
+            position: fixed;
+
+            z-index: 99999;
+
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background:
+                rgba(0, 0, 0, 0.90);
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 15px;
+        }
+
+        .qr-box {
+
+            position: relative;
+
+            width: 400px;
+
+            max-width: 100%;
+
+            max-height: 95vh;
+
+            overflow-y: auto;
+
+            background: #1c1c1c;
+
+            border-radius: 25px;
+
+            padding: 30px 25px;
+
+            text-align: center;
+
+            border:
+                1px solid
+                rgba(255, 193, 7, 0.20);
+
+            box-shadow:
+                0 0 40px
+                rgba(0, 0, 0, 0.7);
+
+            animation:
+                popupAnimation
+                0.25s ease;
+        }
+
+        @keyframes popupAnimation {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    scale(0.85);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    scale(1);
+            }
+        }
+
+        .qr-title {
+
+            color: #ffc107;
+
+            font-size: 30px;
+
+            font-weight: 700;
+
+            margin-bottom: 5px;
+        }
+
+        .qr-amount {
+
+            color: white;
+
+            font-size: 38px;
+
+            font-weight: 800;
+
+            margin-bottom: 12px;
+        }
+
+        .scan-text {
+
+            color: #dddddd;
+
+            font-size: 16px;
+
+            line-height: 1.6;
+
+            margin-bottom: 15px;
+        }
+
+        .scan-text strong {
+
+            color: #ffc107;
+        }
+
+        .qr-wrapper {
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            width: 280px;
+
+            height: 280px;
+
+            max-width: 100%;
+
+            margin: 15px auto 20px;
+
+            background: white;
+
+            padding: 10px;
+
+            border-radius: 15px;
+        }
+
+        .qr-image {
+
+            display: block;
+
+            width: 260px;
+
+            height: 260px;
+
+            max-width: 100%;
+
+            max-height: 100%;
+
+            object-fit: contain;
+        }
+
+
+        /* =================================================
+           UPI
+        ================================================= */
+
+        .upi-box {
+
+            background: #252525;
+
+            border-radius: 12px;
+
+            padding: 12px;
+
+            margin-bottom: 15px;
+        }
+
+        .upi-label {
+
+            color: #999999;
+
+            font-size: 13px;
+
+            margin-bottom: 5px;
+        }
+
+        .upi-id {
+
+            color: #ffffff;
+
+            font-size: 15px;
+
+            font-weight: 600;
+
+            word-break: break-all;
+        }
+
+
+        /* =================================================
+           STATUS
+        ================================================= */
+
+        .status-box {
+
+            background:
+                rgba(255, 193, 7, 0.08);
+
+            border:
+                1px solid
+                rgba(255, 193, 7, 0.20);
+
+            border-radius: 12px;
+
+            padding: 14px;
+
+            color: #dddddd;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+        .status-box strong {
+
+            color: #ffc107;
+        }
+
+
+        /* =================================================
+           CONFIRM BUTTON
+        ================================================= */
+
+        .confirm-btn {
+
+            width: 100%;
+
+            height: 60px;
+
+            margin-top: 18px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background: #28a745;
+
+            color: white;
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: all 0.25s ease;
+        }
+
+        .confirm-btn:hover {
+
+            background: #218838;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 20px
+                rgba(40, 167, 69, 0.25);
+        }
+
+
+        /* =================================================
+           CLOSE BUTTON
+        ================================================= */
+
+        .close-btn {
+
+            position: absolute;
+
+            top: 12px;
+
+            right: 12px;
+
+            width: 42px;
+
+            height: 42px;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background: #333333;
+
+            color: white;
+
+            font-size: 27px;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .close-btn:hover {
+
+            background: #444444;
+
+            transform: rotate(90deg);
+        }
+
+
+        /* =================================================
+           MOBILE
+        ================================================= */
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .payment-container {
+
+                padding: 35px 16px;
+            }
+
+            .payment-title {
+
+                font-size: 26px;
+            }
+
+            .payment-subtitle {
+
+                font-size: 16px;
+            }
+
+            .amount {
+
+                font-size: 46px;
+            }
+
+            .pay-btn {
+
+                height: 68px;
+
+                font-size: 22px;
+            }
+
+            .secure-text {
+
+                font-size: 16px;
+            }
+
+            .qr-box {
+
+                padding: 28px 18px;
+            }
+
+            .qr-title {
+
+                font-size: 27px;
+            }
+
+            .qr-amount {
+
+                font-size: 34px;
+            }
+
+            .qr-wrapper {
+
+                width: 250px;
+
+                height: 250px;
+            }
+
+            .qr-image {
+
+                width: 230px;
+
+                height: 230px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     PAYMENT CARD
+====================================================== -->
+
+<div class="payment-container">
+
+    <div class="payment-title">
+        Online Payment
+    </div>
+
+    <div class="payment-subtitle">
+        Complete your booking payment
+    </div>
+
+    <div class="booking-id">
+
+        Booking ID:
+
+        <strong>
+            #{{ booking.id }}
+        </strong>
+
+    </div>
+
+    <div class="amount">
+        ₹{{ booking.amount }}
+    </div>
+
+    <button
+        type="button"
+        class="pay-btn"
+        onclick="openQR()"
+    >
+
+        Scan & Pay ₹{{ booking.amount }}
+
+    </button>
+
+    <div class="secure-text">
+
+        Secure payment for
+
+        <strong>
+            7 Cricket Zone
+        </strong>
+
+        <br>
+
+        Google Pay / PhonePe / Paytm supported.
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     QR MODAL
+====================================================== -->
+
+<div
+    id="qrModal"
+    class="qr-modal"
+>
+
+    <div class="qr-box">
+
+
+        <!-- CLOSE -->
+
+        <button
+            type="button"
+            class="close-btn"
+            onclick="closeQR()"
+        >
+            ×
+        </button>
+
+
+        <!-- TITLE -->
+
+        <div class="qr-title">
+            Scan & Pay
+        </div>
+
+
+        <!-- AMOUNT -->
+
+        <div class="qr-amount">
+            ₹{{ booking.amount }}
+        </div>
+
+
+        <!-- INSTRUCTIONS -->
+
+        <div class="scan-text">
+
+            Scan this QR using
+
+            <br>
+
+            <strong>
+                Google Pay / PhonePe / Paytm
+            </strong>
+
+            <br>
+
+            Amount will be filled automatically.
+
+        </div>
+
+
+        <!-- QR -->
+
+        <div class="qr-wrapper">
+
+            <img
+                src="data:image/png;base64,{{ qr_base64 }}"
+                alt="UPI Payment QR"
+                class="qr-image"
+            >
+
+        </div>
+
+
+        <!-- UPI ID -->
+
+        <div class="upi-box">
+
+            <div class="upi-label">
+                UPI ID
+            </div>
+
+            <div class="upi-id">
+                {{ upi_id }}
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT STATUS -->
+
+        <div class="status-box">
+
+            Payment Status:
+
+            <strong id="paymentStatus">
+                Pending
+            </strong>
+
+            <br>
+            <br>
+
+            After completing payment,
+            click the button below.
+
+        </div>
+
+
+        <!-- =================================================
+             PAYMENT SUCCESS BUTTON
+        ================================================== -->
+
+        <form
+            method="POST"
+            action="{% url 'online_payment_success' booking.id %}"
+            id="paymentForm"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="confirm-btn"
+                id="confirmBtn"
+            >
+
+                ✅ I HAVE COMPLETED PAYMENT
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+    /* =====================================================
+       OPEN QR
+    ===================================================== */
+
+    function openQR() {
+
+        const modal =
+            document.getElementById(
+                "qrModal"
+            );
+
+        modal.style.display = "flex";
+
+        document.body.style.overflow =
+            "hidden";
+    }
+
+
+    /* =====================================================
+       CLOSE QR
+    ===================================================== */
+
+    function closeQR() {
+
+        const modal =
+            document.getElementById(
+                "qrModal"
+            );
+
+        modal.style.display = "none";
+
+        document.body.style.overflow =
+            "auto";
+    }
+
+
+    /* =====================================================
+       OUTSIDE CLICK
+    ===================================================== */
+
+    window.addEventListener(
+        "click",
+        function(event) {
+
+            const modal =
+                document.getElementById(
+                    "qrModal"
+                );
+
+            if (event.target === modal) {
+
+                closeQR();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       ESC
+    ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Escape") {
+
+                closeQR();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       CONFIRM BUTTON
+    ===================================================== */
+
+    document.getElementById(
+        "paymentForm"
+    ).addEventListener(
+        "submit",
+        function() {
+
+            const button =
+                document.getElementById(
+                    "confirmBtn"
+                );
+
+            button.disabled = true;
+
+            button.innerHTML =
+                "⏳ Processing Payment...";
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

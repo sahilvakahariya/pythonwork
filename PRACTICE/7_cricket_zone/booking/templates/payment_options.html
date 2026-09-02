@@ -1,0 +1,374 @@
+{% extends "base.html" %}
+
+{% block title %}
+Payment Options | 7 Cricket Zone
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.payment-options-page{
+    min-height:90vh;
+    padding:60px 15px 90px;
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(255,193,7,.12),
+            transparent 40%
+        ),
+        #020906;
+
+    color:white;
+}
+
+.payment-options-container{
+    max-width:900px;
+    margin:auto;
+}
+
+.payment-options-title{
+    text-align:center;
+    margin-bottom:10px;
+    font-size:38px;
+    font-weight:900;
+}
+
+.payment-options-title span{
+    color:#ffc107;
+}
+
+.payment-options-subtitle{
+    text-align:center;
+    color:rgba(255,255,255,.65);
+    margin-bottom:35px;
+}
+
+.booking-summary{
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:20px;
+    padding:22px;
+    margin-bottom:30px;
+}
+
+.summary-row{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    padding:11px 0;
+    border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.summary-row:last-child{
+    border-bottom:none;
+}
+
+.summary-label{
+    color:rgba(255,255,255,.55);
+}
+
+.summary-value{
+    color:white;
+    font-weight:700;
+    text-align:right;
+}
+
+.amount-value{
+    color:#ffc107;
+    font-size:23px;
+}
+
+.payment-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:25px;
+}
+
+.payment-option{
+    background:#111312;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:22px;
+    padding:35px 25px;
+    text-align:center;
+    transition:.3s;
+}
+
+.payment-option:hover{
+    transform:translateY(-5px);
+    border-color:rgba(255,193,7,.45);
+    box-shadow:0 15px 40px rgba(0,0,0,.35);
+}
+
+.payment-icon{
+    font-size:55px;
+    margin-bottom:15px;
+}
+
+.payment-option h2{
+    margin:0 0 10px;
+    font-size:25px;
+    font-weight:900;
+}
+
+.payment-option p{
+    color:rgba(255,255,255,.55);
+    min-height:45px;
+    line-height:1.6;
+}
+
+.payment-btn{
+    display:block;
+    width:100%;
+    margin-top:25px;
+    padding:16px;
+
+    border:none;
+    border-radius:14px;
+
+    font-size:17px;
+    font-weight:900;
+
+    cursor:pointer;
+    text-decoration:none;
+    box-sizing:border-box;
+
+    transition:.3s;
+}
+
+.cash-btn,
+.online-btn{
+    background:#ffc107;
+    color:#111;
+}
+
+.payment-btn:hover{
+    background:#ffca2c;
+    color:#111;
+    transform:translateY(-2px);
+}
+
+@media(max-width:700px){
+
+    .payment-options-title{
+        font-size:30px;
+    }
+
+    .payment-grid{
+        grid-template-columns:1fr;
+    }
+
+    .summary-row{
+        font-size:14px;
+    }
+}
+
+</style>
+
+
+<section class="payment-options-page">
+
+<div class="payment-options-container">
+
+
+    <h1 class="payment-options-title">
+
+        SELECT <span>PAYMENT</span>
+
+    </h1>
+
+
+    <p class="payment-options-subtitle">
+
+        Choose how you want to pay for your booking
+
+    </p>
+
+
+    <!-- BOOKING SUMMARY -->
+
+    <div class="booking-summary">
+
+
+        <div class="summary-row">
+
+            <span class="summary-label">
+                Booking ID
+            </span>
+
+            <span class="summary-value">
+                #{{ booking.id }}
+            </span>
+
+        </div>
+
+
+        <div class="summary-row">
+
+            <span class="summary-label">
+                Customer
+            </span>
+
+            <span class="summary-value">
+                {{ booking.name }}
+            </span>
+
+        </div>
+
+
+        <div class="summary-row">
+
+            <span class="summary-label">
+                Date
+            </span>
+
+            <span class="summary-value">
+                {{ booking.date }}
+            </span>
+
+        </div>
+
+
+        <div class="summary-row">
+
+            <span class="summary-label">
+                Time
+            </span>
+
+            <span class="summary-value">
+                {{ booking.time }}
+            </span>
+
+        </div>
+
+
+        <div class="summary-row">
+
+            <span class="summary-label">
+                Ball
+            </span>
+
+            <span class="summary-value">
+                {{ booking.ball_type }}
+            </span>
+
+        </div>
+
+
+        <div class="summary-row">
+
+            <span class="summary-label">
+                Overs
+            </span>
+
+            <span class="summary-value">
+                {{ booking.overs }} Overs
+            </span>
+
+        </div>
+
+
+        <div class="summary-row">
+
+            <span class="summary-label">
+                Total Amount
+            </span>
+
+            <span class="summary-value amount-value">
+                ₹{{ booking.amount }}
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- PAYMENT OPTIONS -->
+
+    <div class="payment-grid">
+
+
+        <!-- CASH -->
+
+        <div class="payment-option">
+
+            <div class="payment-icon">
+                💵
+            </div>
+
+            <h2>
+                Cash Payment
+            </h2>
+
+            <p>
+
+                Pay cash at 7 Cricket Zone.
+
+                Your receipt will show
+
+                <b>Pending</b>.
+
+            </p>
+
+
+            <form
+                method="POST"
+                action="{% url 'cash_payment' booking.id %}"
+            >
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="payment-btn cash-btn"
+                >
+
+                    💵 CONFIRM CASH BOOKING
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- ONLINE -->
+
+        <div class="payment-option">
+
+            <div class="payment-icon">
+                📱
+            </div>
+
+            <h2>
+                Online Payment
+            </h2>
+
+            <p>
+
+                Pay using UPI, Google Pay,
+                PhonePe or Paytm.
+
+            </p>
+
+
+            <a
+                href="{% url 'online_payment' booking.id %}"
+                class="payment-btn online-btn"
+            >
+
+                📱 PAY ONLINE
+
+            </a>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+</section>
+
+{% endblock %}

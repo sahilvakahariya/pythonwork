@@ -1,4 +1,6 @@
+
 from pathlib import Path
+
 
 # =========================================================
 # BASE DIRECTORY
@@ -23,6 +25,7 @@ ALLOWED_HOSTS = []
 # =========================================================
 
 INSTALLED_APPS = [
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -31,6 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "booking",
+
 ]
 
 
@@ -39,6 +43,7 @@ INSTALLED_APPS = [
 # =========================================================
 
 MIDDLEWARE = [
+
     "django.middleware.security.SecurityMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -52,6 +57,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
 
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
 ]
 
 
@@ -67,7 +73,9 @@ ROOT_URLCONF = "cricketzone.urls"
 # =========================================================
 
 TEMPLATES = [
+
     {
+
         "BACKEND":
             "django.template.backends.django.DjangoTemplates",
 
@@ -78,6 +86,7 @@ TEMPLATES = [
         "APP_DIRS": True,
 
         "OPTIONS": {
+
             "context_processors": [
 
                 "django.template.context_processors.request",
@@ -87,8 +96,11 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
 
             ],
+
         },
+
     },
+
 ]
 
 
@@ -104,13 +116,17 @@ WSGI_APPLICATION = "cricketzone.wsgi.application"
 # =========================================================
 
 DATABASES = {
+
     "default": {
+
         "ENGINE":
             "django.db.backends.sqlite3",
 
         "NAME":
             BASE_DIR / "db.sqlite3",
+
     }
+
 }
 
 
@@ -119,25 +135,35 @@ DATABASES = {
 # =========================================================
 
 AUTH_PASSWORD_VALIDATORS = [
+
     {
+
         "NAME":
             "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+
     },
 
     {
+
         "NAME":
             "django.contrib.auth.password_validation.MinimumLengthValidator",
+
     },
 
     {
+
         "NAME":
             "django.contrib.auth.password_validation.CommonPasswordValidator",
+
     },
 
     {
+
         "NAME":
             "django.contrib.auth.password_validation.NumericPasswordValidator",
+
     },
+
 ]
 
 
@@ -159,10 +185,6 @@ USE_TZ = True
 # =========================================================
 
 STATIC_URL = "/static/"
-
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
@@ -199,20 +221,26 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = "sahilvakahariya@gmail.com"
 
+
 # IMPORTANT:
-# અહીં Gmail App Password નાખવો.
-# Normal Gmail password નહીં.
+# Gmail App Password use karo.
+# Normal Gmail password nahi.
+#
+# Ahiya tamaro NEW Gmail App Password mukjo.
+
 EMAIL_HOST_PASSWORD = "bkev nvuc wovb gxyw"
+
+
+# Sender email
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-from dotenv import load_dotenv
-load_dotenv()
+
 # =========================================================
 # 7 CRICKET ZONE OWNER EMAIL
 # =========================================================
 
-OWNER_EMAIL = "sahilvakahariya@gmail.com"
+OWNER_EMAIL = "7cricketzone@gmail.com"
 
 
 # =========================================================
@@ -229,3 +257,7 @@ UPI_PAYEE_NAME = "7 Cricket Zone"
 # =========================================================
 
 OWNER_WHATSAPP = "917016038813"
+
+
+
+

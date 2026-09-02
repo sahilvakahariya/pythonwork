@@ -1,3 +1,5 @@
+# admin.py
+
 from django.contrib import admin
 from .models import Booking
 
@@ -8,12 +10,14 @@ class BookingAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "name",
+        "email",
         "mobile",
         "date",
         "time",
         "ball_type",
         "overs",
         "amount",
+        "payment_method",
         "payment_status",
         "created_at",
     )
@@ -21,6 +25,7 @@ class BookingAdmin(admin.ModelAdmin):
     list_filter = (
         "date",
         "ball_type",
+        "payment_method",
         "payment_status",
     )
 
@@ -33,3 +38,5 @@ class BookingAdmin(admin.ModelAdmin):
     ordering = (
         "-created_at",
     )
+
+    list_per_page = 25

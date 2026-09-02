@@ -1,63 +1,77 @@
-from django.contrib import admin
 from django.urls import path
-from django.conf import settings
-from django.conf.urls.static import static
 
-from . import views
-
+from .views import (
+    home,
+    booking,
+    payment_options,
+    online_payment,
+    online_payment_success,
+    payment_confirmation,
+    payment_status,
+    cash_payment,
+    api_slots,
+    my_bookings,
+)
 
 urlpatterns = [
 
-    # Admin
-    path("admin/", admin.site.urls),
-
-    # Home
     path(
         "",
-        views.home,
+        home,
         name="home"
     ),
 
-    # Booking
     path(
         "booking/",
-        views.booking_page,
+        booking,
         name="booking"
     ),
 
-    # Payment page
     path(
-        "payment/<int:booking_id>/",
-        views.payment_page,
-        name="payment"
+        "payment-options/<int:booking_id>/",
+        payment_options,
+        name="payment_options"
     ),
 
-    # Cashfree return
     path(
-        "payment/return/",
-        views.payment_return,
-        name="payment_return"
+        "online-payment/<int:booking_id>/",
+        online_payment,
+        name="online_payment"
     ),
 
-    # Payment success
     path(
-        "payment/success/<int:booking_id>/",
-        views.payment_success,
-        name="payment_success"
+        "online-payment-success/<int:booking_id>/",
+        online_payment_success,
+        name="online_payment_success"
     ),
 
-    # Cashfree webhook
     path(
-        "cashfree/webhook/",
-        views.cashfree_webhook,
-        name="cashfree_webhook"
+        "payment-confirmation/<int:booking_id>/",
+        payment_confirmation,
+        name="payment_confirmation"
     ),
-    
+
+    path(
+        "payment-status/<int:booking_id>/",
+        payment_status,
+        name="payment_status"
+    ),
+
+    path(
+        "cash-payment/<int:booking_id>/",
+        cash_payment,
+        name="cash_payment"
+    ),
+
+    path(
+        "api/slots/",
+        api_slots,
+        name="api_slots"
+    ),
+
+    path(
+        "my-bookings/",
+        my_bookings,
+        name="my_bookings"
+    ),
 ]
-
-
-if settings.DEBUG:
-    urlpatterns += static(
-        settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT
-    )

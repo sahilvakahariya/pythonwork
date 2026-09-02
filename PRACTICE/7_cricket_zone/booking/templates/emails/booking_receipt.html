@@ -1,32 +1,41 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<title>
-7 Cricket Zone Receipt
-</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>7 Cricket Zone - Booking Receipt</title>
 
 </head>
 
 
 <body
 style="
-margin:0;
-padding:30px 10px;
-background:#f4f6f5;
-font-family:Arial,sans-serif;
+    margin:0;
+    padding:0;
+    background:#f4f6f5;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#222222;
 "
 >
 
 
+<!-- =====================================================
+     MAIN WRAPPER
+===================================================== -->
+
 <table
-width="100%"
-cellpadding="0"
-cellspacing="0"
+    width="100%"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+    style="
+        background:#f4f6f5;
+        padding:30px 10px;
+    "
 >
 
 <tr>
@@ -34,46 +43,62 @@ cellspacing="0"
 <td align="center">
 
 
+<!-- =====================================================
+     EMAIL CARD
+===================================================== -->
+
 <table
-width="600"
-style="
-max-width:600px;
-background:#ffffff;
-border-radius:18px;
-overflow:hidden;
-"
+    width="600"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+    style="
+        max-width:600px;
+        width:100%;
+        background:#ffffff;
+        border-radius:18px;
+        overflow:hidden;
+        box-shadow:0 5px 25px rgba(0,0,0,.10);
+    "
 >
 
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
 <tr>
 
 <td
 style="
-background:#06140d;
-padding:30px;
-text-align:center;
+    background:#06140d;
+    padding:30px 20px;
+    text-align:center;
 "
 >
 
 <h1
 style="
-margin:0;
-color:#ffc107;
+    margin:0;
+    color:#ffc107;
+    font-size:28px;
+    font-weight:900;
+    letter-spacing:1px;
 "
 >
-
-7 CRICKET ZONE
-
+    7 CRICKET ZONE
 </h1>
+
 
 <p
 style="
-color:white;
+    margin:8px 0 0;
+    color:#ffffff;
+    font-size:14px;
+    letter-spacing:1px;
 "
 >
-
-BOOKING RECEIPT
-
+    BOOKING RECEIPT
 </p>
 
 </td>
@@ -81,119 +106,709 @@ BOOKING RECEIPT
 </tr>
 
 
+<!-- =====================================================
+     PAYMENT STATUS
+===================================================== -->
+
 <tr>
 
 <td
 style="
-padding:30px;
+    padding:30px 25px 10px;
+    text-align:center;
 "
 >
 
-<h2
+{% if booking.payment_status == "Success" %}
+
+<div
 style="
-color:#198754;
+    display:inline-block;
+    padding:10px 20px;
+    background:#e8f7ef;
+    border:1px solid #b7e5ca;
+    border-radius:30px;
+    color:#198754;
+    font-size:13px;
+    font-weight:bold;
+"
+>
+    ✓ PAYMENT SUCCESSFUL
+</div>
+
+{% else %}
+
+<div
+style="
+    display:inline-block;
+    padding:10px 20px;
+    background:#fff7dc;
+    border:1px solid #ffe08a;
+    border-radius:30px;
+    color:#b58100;
+    font-size:13px;
+    font-weight:bold;
+"
+>
+    ⏳ PAYMENT {{ booking.payment_status|upper }}
+</div>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<tr>
+
+<td
+style="
+    padding:20px 30px 35px;
 "
 >
 
-PAYMENT SUCCESSFUL
 
-</h2>
+<!-- GREETING -->
 
+<p
+style="
+    margin:0 0 12px;
+    font-size:16px;
+    color:#222222;
+"
+>
 
-<p>
-
-Hello {{ booking.name }},
-
-</p>
-
-
-<p>
-
-Your booking has been successfully
-confirmed.
+Hello
+<strong>{{ booking.name }}</strong>,
 
 </p>
 
 
-<hr>
+<p
+style="
+    margin:0 0 25px;
+    color:#666666;
+    font-size:14px;
+    line-height:1.6;
+"
+>
 
+Your booking details are given below.
+Please keep this email as your booking receipt.
 
-<p>
-<b>Booking ID:</b>
-#{{ booking.id }}
 </p>
 
 
-<p>
-<b>Date:</b>
-{{ booking.date|date:"d M Y" }}
-</p>
+<!-- =====================================================
+     BOOKING INFORMATION
+===================================================== -->
+
+<table
+width="100%"
+cellpadding="0"
+cellspacing="0"
+border="0"
+style="
+    border:1px solid #e5e5e5;
+    border-radius:12px;
+    overflow:hidden;
+"
+>
 
 
-<p>
-<b>Time:</b>
-{{ booking.time|time:"h:i A" }}
-</p>
+<tr>
+
+<td
+colspan="2"
+style="
+    background:#06140d;
+    color:#ffc107;
+    padding:14px 16px;
+    font-size:16px;
+    font-weight:bold;
+"
+>
+    🏏 Booking Information
+</td>
+
+</tr>
 
 
-<p>
-<b>Ball:</b>
-{{ booking.ball_type }}
-</p>
+<!-- BOOKING ID -->
+
+<tr>
+
+<td
+style="
+    padding:14px 16px;
+    color:#777777;
+    font-size:12px;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    Booking ID
+</td>
+
+<td
+align="right"
+style="
+    padding:14px 16px;
+    color:#222222;
+    font-size:14px;
+    font-weight:bold;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    #{{ booking.id }}
+</td>
+
+</tr>
 
 
-<p>
-<b>Overs:</b>
-{{ booking.overs }}
-</p>
+<!-- DATE -->
+
+<tr>
+
+<td
+style="
+    padding:14px 16px;
+    color:#777777;
+    font-size:12px;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    Booking Date
+</td>
+
+<td
+align="right"
+style="
+    padding:14px 16px;
+    color:#222222;
+    font-size:14px;
+    font-weight:bold;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    {{ booking.date|date:"d M Y" }}
+</td>
+
+</tr>
 
 
-<p>
-<b>Amount Paid:</b>
-₹{{ booking.amount }}
-</p>
+<!-- TIME -->
+
+<tr>
+
+<td
+style="
+    padding:14px 16px;
+    color:#777777;
+    font-size:12px;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    Time Slot
+</td>
+
+<td
+align="right"
+style="
+    padding:14px 16px;
+    color:#222222;
+    font-size:14px;
+    font-weight:bold;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    {{ booking.time|time:"h:i A" }}
+</td>
+
+</tr>
 
 
-<p>
+<!-- BALL -->
 
-<b>Payment Status:</b>
+<tr>
+
+<td
+style="
+    padding:14px 16px;
+    color:#777777;
+    font-size:12px;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    Ball Type
+</td>
+
+<td
+align="right"
+style="
+    padding:14px 16px;
+    color:#222222;
+    font-size:14px;
+    font-weight:bold;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    {{ booking.ball_type }}
+</td>
+
+</tr>
+
+
+<!-- OVERS -->
+
+<tr>
+
+<td
+style="
+    padding:14px 16px;
+    color:#777777;
+    font-size:12px;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    Overs
+</td>
+
+<td
+align="right"
+style="
+    padding:14px 16px;
+    color:#222222;
+    font-size:14px;
+    font-weight:bold;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    {{ booking.overs }} Overs
+</td>
+
+</tr>
+
+
+<!-- CREATED -->
+
+<tr>
+
+<td
+style="
+    padding:14px 16px;
+    color:#777777;
+    font-size:12px;
+"
+>
+    Booked On
+</td>
+
+<td
+align="right"
+style="
+    padding:14px 16px;
+    color:#222222;
+    font-size:14px;
+    font-weight:bold;
+"
+>
+    {{ booking.created_at|date:"d M Y, h:i A" }}
+</td>
+
+</tr>
+
+
+</table>
+
+
+<!-- SPACE -->
+
+<div style="height:20px;"></div>
+
+
+<!-- =====================================================
+     CUSTOMER INFORMATION
+===================================================== -->
+
+<table
+width="100%"
+cellpadding="0"
+cellspacing="0"
+border="0"
+style="
+    border:1px solid #e5e5e5;
+    border-radius:12px;
+    overflow:hidden;
+"
+>
+
+
+<tr>
+
+<td
+colspan="2"
+style="
+    background:#06140d;
+    color:#ffc107;
+    padding:14px 16px;
+    font-size:16px;
+    font-weight:bold;
+"
+>
+    👤 Customer Information
+</td>
+
+</tr>
+
+
+<!-- NAME -->
+
+<tr>
+
+<td
+style="
+    padding:14px 16px;
+    color:#777777;
+    font-size:12px;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    Name
+</td>
+
+<td
+align="right"
+style="
+    padding:14px 16px;
+    color:#222222;
+    font-size:14px;
+    font-weight:bold;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    {{ booking.name }}
+</td>
+
+</tr>
+
+
+<!-- EMAIL -->
+
+<tr>
+
+<td
+style="
+    padding:14px 16px;
+    color:#777777;
+    font-size:12px;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    Email
+</td>
+
+<td
+align="right"
+style="
+    padding:14px 16px;
+    color:#222222;
+    font-size:14px;
+    font-weight:bold;
+    word-break:break-word;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    {{ booking.email }}
+</td>
+
+</tr>
+
+
+<!-- MOBILE -->
+
+<tr>
+
+<td
+style="
+    padding:14px 16px;
+    color:#777777;
+    font-size:12px;
+"
+>
+    Mobile
+</td>
+
+<td
+align="right"
+style="
+    padding:14px 16px;
+    color:#222222;
+    font-size:14px;
+    font-weight:bold;
+"
+>
+    {{ booking.mobile }}
+</td>
+
+</tr>
+
+
+</table>
+
+
+<!-- SPACE -->
+
+<div style="height:20px;"></div>
+
+
+<!-- =====================================================
+     PAYMENT INFORMATION
+===================================================== -->
+
+<table
+width="100%"
+cellpadding="0"
+cellspacing="0"
+border="0"
+style="
+    border:1px solid #e5e5e5;
+    border-radius:12px;
+    overflow:hidden;
+"
+>
+
+
+<tr>
+
+<td
+colspan="2"
+style="
+    background:#06140d;
+    color:#ffc107;
+    padding:14px 16px;
+    font-size:16px;
+    font-weight:bold;
+"
+>
+    💳 Payment Information
+</td>
+
+</tr>
+
+
+<!-- PAYMENT METHOD -->
+
+<tr>
+
+<td
+style="
+    padding:14px 16px;
+    color:#777777;
+    font-size:12px;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    Payment Method
+</td>
+
+<td
+align="right"
+style="
+    padding:14px 16px;
+    color:#222222;
+    font-size:14px;
+    font-weight:bold;
+    border-bottom:1px solid #eeeeee;
+"
+>
+    {{ booking.payment_method }}
+</td>
+
+</tr>
+
+
+<!-- PAYMENT STATUS -->
+
+<tr>
+
+<td
+style="
+    padding:14px 16px;
+    color:#777777;
+    font-size:12px;
+"
+>
+    Payment Status
+</td>
+
+<td
+align="right"
+style="
+    padding:14px 16px;
+    font-size:14px;
+    font-weight:bold;
+"
+>
+
+{% if booking.payment_status == "Success" %}
 
 <span style="color:#198754;">
-
-SUCCESS
-
+    ✓ SUCCESS
 </span>
 
-</p>
+{% else %}
 
+<span style="color:#b58100;">
+    {{ booking.payment_status|upper }}
+</span>
 
-<hr>
-
-
-<p>
-
-Thank you for choosing
-<b>7 Cricket Zone</b>.
-
-</p>
+{% endif %}
 
 </td>
 
 </tr>
 
+
+</table>
+
+
+<!-- =====================================================
+     TOTAL AMOUNT
+===================================================== -->
+
+<table
+width="100%"
+cellpadding="0"
+cellspacing="0"
+border="0"
+style="
+    margin-top:20px;
+    background:#fff8df;
+    border:1px solid #ffe08a;
+    border-radius:12px;
+"
+>
+
+<tr>
+
+<td
+align="center"
+style="
+    padding:22px 15px;
+"
+>
+
+<div
+style="
+    color:#777777;
+    font-size:12px;
+    font-weight:bold;
+    letter-spacing:1px;
+    text-transform:uppercase;
+"
+>
+    TOTAL AMOUNT
+</div>
+
+
+<div
+style="
+    margin-top:5px;
+    color:#d99f00;
+    font-size:34px;
+    font-weight:900;
+"
+>
+    ₹{{ booking.amount }}
+</div>
+
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- =====================================================
+     THANK YOU
+===================================================== -->
+
+<p
+style="
+    margin:25px 0 0;
+    text-align:center;
+    color:#555555;
+    font-size:14px;
+    line-height:1.6;
+"
+>
+
+Thank you for choosing
+<strong>7 Cricket Zone</strong> 🏏
+
+<br>
+
+We look forward to seeing you on the field!
+
+</p>
+
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
 
 <tr>
 
 <td
 style="
-background:#06140d;
-padding:20px;
-text-align:center;
-color:white;
+    background:#06140d;
+    padding:22px 15px;
+    text-align:center;
 "
 >
 
-7 Cricket Zone
+<p
+style="
+    margin:0;
+    color:#ffc107;
+    font-size:17px;
+    font-weight:bold;
+"
+>
+    7 Cricket Zone
+</p>
+
+
+<p
+style="
+    margin:8px 0 0;
+    color:#aaaaaa;
+    font-size:12px;
+"
+>
+    Please keep this email for your booking reference.
+</p>
+
+
+<p
+style="
+    margin:8px 0 0;
+    color:#777777;
+    font-size:11px;
+"
+>
+    Thank you for booking with us.
+</p>
 
 </td>
 
@@ -208,6 +823,7 @@ color:white;
 </tr>
 
 </table>
+
 
 </body>
 

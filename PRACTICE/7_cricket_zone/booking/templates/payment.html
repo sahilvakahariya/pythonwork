@@ -1,96 +1,405 @@
 {% extends "base.html" %}
+{% load static %}
+
 
 {% block title %}
-Payment | 7 Cricket Zone
+Online Payment | 7 Cricket Zone
 {% endblock %}
 
 {% block content %}
 
-<div class="container py-5">
+<style>
 
-    <div class="card p-4 text-center">
+.payment-page {
 
-        <h2>
-            Complete Payment
-        </h2>
+    min-height:90vh;
 
-        <hr>
+    padding:50px 15px 80px;
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(255,193,7,.12),
+            transparent 40%
+        ),
+        #020906;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+}
+
+
+.payment-card {
+
+    width:100%;
+
+    max-width:600px;
+
+    height:max-content;
+
+    padding:35px 25px;
+
+    border-radius:25px;
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.10);
+
+    text-align:center;
+
+}
+
+
+.payment-card h1 {
+
+    font-weight:900;
+
+    margin-bottom:8px;
+
+}
+
+
+.payment-card h1 span {
+
+    color:#ffc107;
+
+}
+
+
+.payment-card > p {
+
+    color:rgba(255,255,255,.65);
+
+}
+
+
+.booking-info {
+
+    margin:25px 0;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    background:rgba(0,0,0,.25);
+
+    text-align:left;
+
+}
+
+
+.booking-info p {
+
+    margin-bottom:10px;
+
+    padding-bottom:9px;
+
+    border-bottom:1px solid rgba(255,255,255,.07);
+
+    color:rgba(255,255,255,.65);
+
+}
+
+
+.booking-info p:last-child {
+
+    border-bottom:none;
+
+}
+
+
+.booking-info strong {
+
+    float:right;
+
+    color:white;
+
+}
+
+
+.amount-row strong {
+
+    color:#ffc107;
+
+    font-size:23px;
+
+}
+
+
+.qr-box {
+
+    background:white;
+
+    display:inline-block;
+
+    padding:15px;
+
+    border-radius:20px;
+
+    margin:20px 0;
+
+}
+
+
+.qr-box img {
+
+    width:260px;
+
+    max-width:100%;
+
+    display:block;
+
+}
+
+
+.upi-id {
+
+    color:#ffc107;
+
+    font-weight:900;
+
+    font-size:18px;
+
+    margin-top:5px;
+
+}
+
+
+.pay-button {
+
+    display:block;
+
+    width:100%;
+
+    margin-top:25px;
+
+    padding:16px;
+
+    border-radius:14px;
+
+    background:#ffc107;
+
+    color:#111;
+
+    text-decoration:none;
+
+    font-weight:900;
+
+    font-size:17px;
+
+    box-sizing:border-box;
+
+}
+
+
+.confirm-online-btn {
+
+    width:100%;
+
+    margin-top:12px;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#20c997;
+
+    color:#111;
+
+    font-size:17px;
+
+    font-weight:900;
+
+    cursor:pointer;
+
+}
+
+
+.note {
+
+    margin-top:20px;
+
+    padding:15px;
+
+    border-radius:14px;
+
+    background:rgba(255,193,7,.08);
+
+    border:1px solid rgba(255,193,7,.20);
+
+    color:rgba(255,255,255,.60);
+
+    font-size:13px;
+
+    line-height:1.6;
+
+}
+
+</style>
+
+
+<section class="payment-page">
+
+<div class="payment-card">
+
+
+    <h1>
+        COMPLETE
+        <span>PAYMENT</span>
+    </h1>
+
+
+    <p>
+        Scan QR and pay ₹{{ booking.amount }}
+    </p>
+
+
+    <div class="booking-info">
+
 
         <p>
             Booking ID:
-            <strong>#{{ booking.id }}</strong>
-        </p>
 
-        <p>
-            Customer:
-            <strong>{{ booking.name }}</strong>
-        </p>
-
-        <p>
-            Date:
-            <strong>{{ booking.date }}</strong>
-        </p>
-
-        <p>
-            Time:
             <strong>
-                {{ booking.time|time:"h:i A" }}
+                #{{ booking.id }}
             </strong>
         </p>
 
+
+        <p>
+            Customer:
+
+            <strong>
+                {{ booking.name }}
+            </strong>
+        </p>
+
+
+        <p>
+            Date:
+
+            <strong>
+                {{ booking.date }}
+            </strong>
+        </p>
+
+
+        <p>
+            Time:
+
+            <strong>
+                {{ booking.time }}
+            </strong>
+        </p>
+
+
         <p>
             Ball:
-            <strong>{{ booking.ball_type }}</strong>
+
+            <strong>
+                {{ booking.ball_type }}
+            </strong>
         </p>
+
 
         <p>
             Overs:
-            <strong>{{ booking.overs }}</strong>
+
+            <strong>
+                {{ booking.overs }}
+            </strong>
         </p>
 
-        <h3>
-            ₹{{ booking.amount }}
-        </h3>
 
-        <button
-            id="pay-button"
-            class="btn btn-warning w-100 mt-3"
-        >
-            PAY NOW
-        </button>
+        <p class="amount-row">
+            Amount:
+
+            <strong>
+                ₹{{ booking.amount }}
+            </strong>
+        </p>
+
 
     </div>
 
+
+    <!-- QR -->
+
+    <div class="qr-box">
+
+        <img
+            src="/static/images/qr.png"
+            alt="UPI Payment QR"
+        >
+
+    </div>
+
+
+    <div>
+        Pay to:
+    </div>
+
+
+    <div class="upi-id">
+        {{ upi_id }}
+    </div>
+
+
+    <!-- OPEN UPI -->
+
+    <a
+        href="{{ upi_url }}"
+        class="pay-button"
+    >
+        📱 OPEN UPI APP
+    </a>
+
+
+    <!-- CONFIRM -->
+
+    <form
+        method="POST"
+        action="{% url 'online_payment_success' booking.id %}"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="confirm-online-btn"
+        >
+            ✅ PAYMENT DONE & CONFIRM BOOKING
+        </button>
+
+    </form>
+
+
+    <div class="note">
+
+        🔒 Pay exactly
+        <b>₹{{ booking.amount }}</b>.
+
+        <br><br>
+
+        After payment, click
+        <b>PAYMENT DONE & CONFIRM BOOKING</b>.
+
+        <br><br>
+
+        Your receipt will be sent to your
+        registered email.
+
+    </div>
+
+
 </div>
 
-
-<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
-
-<script>
-
-const cashfree = Cashfree({
-    mode: "{{ cashfree_mode }}"
-});
-
-document
-    .getElementById("pay-button")
-    .addEventListener(
-        "click",
-        function () {
-
-            cashfree.checkout({
-
-                paymentSessionId:
-                    "{{ payment_session_id }}",
-
-                redirectTarget:
-                    "_self"
-
-            });
-
-        }
-    );
-
-</script>
+</section>
 
 {% endblock %}

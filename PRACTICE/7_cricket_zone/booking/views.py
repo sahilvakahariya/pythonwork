@@ -1,30 +1,37 @@
-import json
-import uuid
 import base64
-import hmac
-import hashlib
+import io
 
-import requests
+from urllib.parse import quote
+from datetime import datetime
+
+import qrcode
 
 from django.conf import settings
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.contrib import messages
-from django.core.mail import EmailMultiAlternatives
-from django.db import IntegrityError, transaction
-from django.http import HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.utils.html import escape
 
 from .models import Booking
 
 
-# ============================================================
-# PRICE
-# ============================================================
+# =========================================================
+# HOME
+# =========================================================
+
+def home(request):
+    return render(
+        request,
+        "home.html"
+    )
+
+
+# =========================================================
+# PRICE LIST
+# =========================================================
 
 PRICES = {
-
     "Tennis Ball": {
         5: 99,
         10: 150,
@@ -45,74 +52,35 @@ PRICES = {
 }
 
 
-# ============================================================
-# SLOT GENERATOR
-# ============================================================
+# =========================================================
+# CUSTOMER BOOKING OWNERSHIP
+# =========================================================
 
-def generate_slots():
+def get_customer_booking(request, booking_id):
 
-    from datetime import datetime, timedelta
-
-    slots = []
-
-    start = datetime.strptime(
-        "08:00",
-        "%H:%M"
+    customer_email = request.session.get(
+        "customer_email"
     )
 
-    end = datetime.strptime(
-        "23:45",
-        "%H:%M"
+    customer_mobile = request.session.get(
+        "customer_mobile"
     )
 
-    current = start
+    if not customer_email or not customer_mobile:
+        return None
 
-    while current <= end:
-
-        hour = current.hour
-
-        if hour < 12:
-            period = "Morning"
-
-        elif hour < 17:
-            period = "Afternoon"
-
-        elif hour < 20:
-            period = "Evening"
-
-        else:
-            period = "Night"
-
-        slots.append({
-            "value": current.strftime("%H:%M"),
-            "display": current.strftime("%I:%M %p"),
-            "period": period,
-        })
-
-        current += timedelta(minutes=15)
-
-    return slots
+    return Booking.objects.filter(
+        id=booking_id,
+        email=customer_email,
+        mobile=customer_mobile
+    ).first()
 
 
-# ============================================================
-# HOME
-# ============================================================
+# =========================================================
+# BOOKING
+# =========================================================
 
-def home(request):
-
-    return render(
-        request,
-        "home.html"
-    )
-
-
-# ============================================================
-# BOOKING PAGE
-# ============================================================
-
-def booking_page(request):
-
-    slots = generate_slots()
+def booking(request):
 
     if request.method == "POST":
 
@@ -132,24 +100,28 @@ def booking_page(request):
         ).strip()
 
         date = request.POST.get(
-            "date"
-        )
+            "date",
+            ""
+        ).strip()
 
         time = request.POST.get(
-            "time"
-        )
+            "time",
+            ""
+        ).strip()
 
         ball_type = request.POST.get(
-            "ball_type"
-        )
+            "ball_type",
+            ""
+        ).strip()
 
-        overs_value = request.POST.get(
-            "overs"
-        )
+        overs = request.POST.get(
+            "overs",
+            ""
+        ).strip()
 
-        # ====================================================
-        # BASIC VALIDATION
-        # ====================================================
+        # =====================================================
+        # VALIDATION
+        # =====================================================
 
         if not all([
             name,
@@ -158,585 +130,719 @@ def booking_page(request):
             date,
             time,
             ball_type,
-            overs_value
+            overs
         ]):
 
             messages.error(
                 request,
-                "Please fill all booking details."
+                "Please fill all required fields."
             )
 
-            return render(
+            return redirect("booking")
+
+        # =====================================================
+        # MOBILE VALIDATION
+        # =====================================================
+
+        if not mobile.isdigit() or len(mobile) != 10:
+
+            messages.error(
                 request,
-                "booking.html",
-                {
-                    "slots": slots
-                }
+                "Please enter a valid 10 digit mobile number."
             )
 
-        # ====================================================
-        # OVERS
-        # ====================================================
+            return redirect("booking")
+
+        # =====================================================
+        # DATE VALIDATION
+        # =====================================================
 
         try:
 
-            overs = int(
-                overs_value
-            )
+            booking_date = datetime.strptime(
+                date,
+                "%Y-%m-%d"
+            ).date()
 
         except ValueError:
+
+            messages.error(
+                request,
+                "Invalid booking date."
+            )
+
+            return redirect("booking")
+
+        # =====================================================
+        # OVERS
+        # =====================================================
+
+        try:
+
+            overs = int(overs)
+
+        except (ValueError, TypeError):
 
             messages.error(
                 request,
                 "Invalid overs selected."
             )
 
-            return render(
-                request,
-                "booking.html",
-                {
-                    "slots": slots
-                }
-            )
+            return redirect("booking")
 
-        # ====================================================
-        # PRICE
-        # ====================================================
+        # =====================================================
+        # BALL TYPE
+        # =====================================================
 
-        try:
-
-            amount = PRICES[
-                ball_type
-            ][overs]
-
-        except KeyError:
+        if ball_type not in PRICES:
 
             messages.error(
                 request,
-                "Invalid ball or overs selected."
+                "Invalid ball type."
             )
 
-            return render(
-                request,
-                "booking.html",
-                {
-                    "slots": slots
-                }
-            )
+            return redirect("booking")
 
-        # ====================================================
-        # DOUBLE BOOKING PROTECTION
-        # ====================================================
+        # =====================================================
+        # OVERS VALIDATION
+        # =====================================================
 
-        try:
-
-            with transaction.atomic():
-
-                existing = (
-                    Booking.objects
-                    .select_for_update()
-                    .filter(
-                        date=date,
-                        time=time,
-                        payment_status__in=[
-                            "Pending",
-                            "Success"
-                        ]
-                    )
-                    .first()
-                )
-
-                if existing:
-
-                    messages.error(
-                        request,
-                        "Sorry! This slot is already booked. Please select another slot."
-                    )
-
-                    return render(
-                        request,
-                        "booking.html",
-                        {
-                            "slots": slots
-                        }
-                    )
-
-                booking = Booking.objects.create(
-
-                    name=name,
-
-                    email=email,
-
-                    mobile=mobile,
-
-                    date=date,
-
-                    time=time,
-
-                    ball_type=ball_type,
-
-                    overs=overs,
-
-                    amount=amount,
-
-                    payment_status="Pending"
-
-                )
-
-        except IntegrityError:
+        if overs not in PRICES[ball_type]:
 
             messages.error(
                 request,
-                "This slot was just booked by another customer. Please select another slot."
+                "Invalid overs selected."
             )
 
-            return render(
-                request,
-                "booking.html",
-                {
-                    "slots": slots
-                }
+            return redirect("booking")
+
+        # =====================================================
+        # AMOUNT
+        # =====================================================
+
+        amount = PRICES[ball_type][overs]
+
+        # =====================================================
+        # VALID TIME SLOTS
+        # 08:00 AM TO 11:45 PM
+        # =====================================================
+
+        valid_times = []
+
+        for minutes in range(
+            8 * 60,
+            24 * 60,
+            15
+        ):
+
+            hour = minutes // 60
+            minute = minutes % 60
+
+            if hour == 0:
+
+                display_hour = 12
+                ampm = "AM"
+
+            elif hour < 12:
+
+                display_hour = hour
+                ampm = "AM"
+
+            elif hour == 12:
+
+                display_hour = 12
+                ampm = "PM"
+
+            else:
+
+                display_hour = hour - 12
+                ampm = "PM"
+
+            valid_times.append(
+                f"{display_hour}:{minute:02d} {ampm}"
             )
 
-        # ====================================================
-        # CASHFREE ORDER
-        # ====================================================
-
-        try:
-
-            order_id = (
-                f"7CZ_{booking.id}_"
-                f"{uuid.uuid4().hex[:12]}"
-            )
-
-            headers = {
-
-                "x-client-id":
-                    settings.CASHFREE_CLIENT_ID,
-
-                "x-client-secret":
-                    settings.CASHFREE_CLIENT_SECRET,
-
-                "x-api-version":
-                    settings.CASHFREE_API_VERSION,
-
-                "Content-Type":
-                    "application/json",
-
-                "Accept":
-                    "application/json",
-            }
-
-            base_url = (
-                request.build_absolute_uri("/")
-            )
-
-            # =================================================
-            # RETURN URL
-            # =================================================
-
-            return_url = (
-
-                base_url.rstrip("/")
-
-                + reverse(
-                    "payment_return"
-                )
-
-                + f"?booking_id={booking.id}"
-
-                + f"&order_id={order_id}"
-            )
-
-            # =================================================
-            # WEBHOOK URL
-            # =================================================
-
-            notify_url = (
-
-                base_url.rstrip("/")
-
-                + reverse(
-                    "cashfree_webhook"
-                )
-            )
-
-            # =================================================
-            # CASHFREE PAYLOAD
-            # =================================================
-
-            payload = {
-
-                "order_id":
-                    order_id,
-
-                "order_amount":
-                    float(amount),
-
-                "order_currency":
-                    "INR",
-
-                "customer_details": {
-
-                    "customer_id":
-                        f"customer_{booking.id}",
-
-                    "customer_name":
-                        name,
-
-                    "customer_email":
-                        email,
-
-                    "customer_phone":
-                        mobile,
-                },
-
-                "order_meta": {
-
-                    "return_url":
-                        return_url,
-
-                    "notify_url":
-                        notify_url,
-                },
-
-                "order_note":
-                    f"7 Cricket Zone Booking #{booking.id}",
-            }
-
-            # =================================================
-            # CREATE ORDER
-            # =================================================
-
-            response = requests.post(
-
-                settings.CASHFREE_BASE_URL
-                + "/orders",
-
-                headers=headers,
-
-                json=payload,
-
-                timeout=30
-            )
-
-            try:
-
-                data = response.json()
-
-            except Exception:
-
-                data = {}
-
-            # =================================================
-            # CASHFREE ERROR
-            # =================================================
-
-            if response.status_code not in [
-                200,
-                201
-            ]:
-
-                booking.delete()
-
-                print(
-                    "CASHFREE ERROR:",
-                    response.text
-                )
-
-                messages.error(
-                    request,
-                    "Payment gateway error. Please try again."
-                )
-
-                return render(
-                    request,
-                    "booking.html",
-                    {
-                        "slots": slots
-                    }
-                )
-
-            # =================================================
-            # PAYMENT SESSION
-            # =================================================
-
-            payment_session_id = data.get(
-                "payment_session_id"
-            )
-
-            if not payment_session_id:
-
-                booking.delete()
-
-                messages.error(
-                    request,
-                    "Payment session could not be created."
-                )
-
-                return render(
-                    request,
-                    "booking.html",
-                    {
-                        "slots": slots
-                    }
-                )
-
-            # =================================================
-            # SAVE CASHFREE ORDER ID
-            # =================================================
-
-            booking.cashfree_order_id = (
-                order_id
-            )
-
-            booking.save(
-                update_fields=[
-                    "cashfree_order_id"
-                ]
-            )
-
-            # =================================================
-            # PAYMENT PAGE
-            # =================================================
-
-            return render(
-                request,
-                "payment.html",
-                {
-                    "booking":
-                        booking,
-
-                    "payment_session_id":
-                        payment_session_id,
-
-                    "cashfree_mode":
-                        "sandbox",
-                }
-            )
-
-        except Exception as e:
-
-            print(
-                "PAYMENT SETUP ERROR:",
-                e
-            )
-
-            booking.delete()
+        if time not in valid_times:
 
             messages.error(
                 request,
-                "Payment setup failed. Please try again."
+                "Invalid time slot."
             )
 
-            return render(
+            return redirect("booking")
+
+        # =====================================================
+        # DUPLICATE SLOT
+        # =====================================================
+
+        already_booked = Booking.objects.filter(
+            date=booking_date,
+            time=time
+        ).exists()
+
+        if already_booked:
+
+            messages.error(
                 request,
-                "booking.html",
-                {
-                    "slots": slots
-                }
+                f"{time} is already booked. Please select another slot."
             )
 
-    # ========================================================
-    # GET REQUEST
-    # ========================================================
+            return redirect("booking")
 
-    return render(
-        request,
-        "booking.html",
-        {
-            "slots": slots
-        }
-    )
+        # =====================================================
+        # CREATE BOOKING
+        # =====================================================
 
+        booking_obj = Booking.objects.create(
 
-# ============================================================
-# PAYMENT PAGE
-# /payment/21/
-# ============================================================
+            name=name,
 
-def payment_page(
-    request,
-    booking_id
-):
+            email=email,
 
-    booking = get_object_or_404(
-        Booking,
-        id=booking_id
-    )
+            mobile=mobile,
 
-    # ========================================================
-    # ALREADY PAID
-    # ========================================================
+            date=booking_date,
 
-    if booking.payment_status == "Success":
+            time=time,
+
+            ball_type=ball_type,
+
+            overs=overs,
+
+            amount=amount,
+
+            payment_method="Online",
+
+            payment_status="Pending",
+        )
+
+        # =====================================================
+        # SESSION
+        # =====================================================
+
+        request.session["customer_email"] = email
+
+        request.session["customer_mobile"] = mobile
+
+        request.session.modified = True
+
+        # =====================================================
+        # PAYMENT OPTIONS
+        # =====================================================
 
         return redirect(
-            "payment_success",
-            booking_id=booking.id
+            "payment_options",
+            booking_id=booking_obj.id
         )
-
-    # ========================================================
-    # PAYMENT PAGE
-    # ========================================================
 
     return render(
         request,
-        "payment.html",
+        "booking.html"
+    )
+
+
+# =========================================================
+# PAYMENT OPTIONS
+# =========================================================
+
+def payment_options(request, booking_id):
+
+    booking_obj = get_customer_booking(
+        request,
+        booking_id
+    )
+
+    if booking_obj is None:
+
+        messages.error(
+            request,
+            "You are not authorized to access this booking."
+        )
+
+        return redirect(
+            "my_bookings"
+        )
+
+    return render(
+        request,
+        "payment_options.html",
         {
-            "booking": booking,
-            "payment_session_id": "",
-            "cashfree_mode": "sandbox",
+            "booking": booking_obj
         }
     )
 
 
-# ============================================================
-# GET CASHFREE PAYMENT STATUS
-# ============================================================
+# =========================================================
+# ONLINE UPI PAYMENT
+# =========================================================
 
-def get_cashfree_payment_status(
-    order_id
-):
+def online_payment(request, booking_id):
 
-    headers = {
+    booking_obj = get_customer_booking(
+        request,
+        booking_id
+    )
 
-        "x-client-id":
-            settings.CASHFREE_CLIENT_ID,
+    if booking_obj is None:
 
-        "x-client-secret":
-            settings.CASHFREE_CLIENT_SECRET,
+        messages.error(
+            request,
+            "You are not authorized to access this booking."
+        )
 
-        "x-api-version":
-            settings.CASHFREE_API_VERSION,
+        return redirect(
+            "my_bookings"
+        )
 
-        "Accept":
-            "application/json",
-    }
+    # =====================================================
+    # ALREADY SUCCESS
+    # =====================================================
+
+    if booking_obj.payment_status == "Success":
+
+        return redirect(
+            "home"
+        )
+
+    # =====================================================
+    # KEEP PAYMENT PENDING
+    # =====================================================
+
+    booking_obj.payment_method = "Online"
+
+    booking_obj.payment_status = "Pending"
+
+    booking_obj.save(
+        update_fields=[
+            "payment_method",
+            "payment_status"
+        ]
+    )
+
+    # =====================================================
+    # UPI DETAILS
+    # =====================================================
+
+    upi_id = settings.UPI_ID
+
+    business_name = "7 Cricket Zone"
+
+    amount = booking_obj.amount
+
+    # =====================================================
+    # TRANSACTION NOTE
+    # =====================================================
+
+    transaction_note = (
+        f"7 Cricket Zone Booking #{booking_obj.id}"
+    )
+
+    # =====================================================
+    # UPI URL
+    # =====================================================
+
+    upi_url = (
+        "upi://pay?"
+        f"pa={quote(str(upi_id))}"
+        f"&pn={quote(business_name)}"
+        f"&am={amount:.2f}"
+        "&cu=INR"
+        f"&tn={quote(transaction_note)}"
+    )
+
+    # =====================================================
+    # GENERATE QR
+    # =====================================================
+
+    qr = qrcode.QRCode(
+
+        version=None,
+
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
+
+        box_size=10,
+
+        border=4,
+    )
+
+    qr.add_data(
+        upi_url
+    )
+
+    qr.make(
+        fit=True
+    )
+
+    qr_image = qr.make_image(
+
+        fill_color="black",
+
+        back_color="white"
+    )
+
+    # =====================================================
+    # BASE64
+    # =====================================================
+
+    buffer = io.BytesIO()
+
+    qr_image.save(
+        buffer,
+        format="PNG"
+    )
+
+    qr_base64 = base64.b64encode(
+        buffer.getvalue()
+    ).decode()
+
+    # =====================================================
+    # RENDER
+    # =====================================================
+
+    return render(
+
+        request,
+
+        "online_payment.html",
+
+        {
+            "booking": booking_obj,
+
+            "upi_id": upi_id,
+
+            "upi_url": upi_url,
+
+            "qr_base64": qr_base64,
+
+            "amount": amount,
+        }
+    )
+
+
+# =========================================================
+# ONLINE PAYMENT SUCCESS
+# =========================================================
+
+def online_payment_success(request, booking_id):
+
+    if request.method != "POST":
+
+        return redirect(
+            "online_payment",
+            booking_id=booking_id
+        )
+
+    booking_obj = get_customer_booking(
+        request,
+        booking_id
+    )
+
+    if booking_obj is None:
+
+        messages.error(
+            request,
+            "Booking not found."
+        )
+
+        return redirect(
+            "my_bookings"
+        )
+
+    # =====================================================
+    # ALREADY SUCCESS
+    # =====================================================
+
+    if booking_obj.payment_status == "Success":
+
+        return redirect(
+            "home"
+        )
+
+    # =====================================================
+    # ONLINE PAYMENT SUCCESS
+    # =====================================================
+
+    booking_obj.payment_method = "Online"
+
+    booking_obj.payment_status = "Success"
+
+    booking_obj.save(
+        update_fields=[
+            "payment_method",
+            "payment_status"
+        ]
+    )
+
+    # =====================================================
+    # SEND CUSTOMER + OWNER EMAIL
+    # =====================================================
+
+    customer_sent, owner_sent = send_booking_emails(
+        booking_obj
+    )
+
+    # =====================================================
+    # MESSAGE
+    # =====================================================
+
+    if customer_sent:
+
+        messages.success(
+            request,
+            "Online payment successful! Receipt sent to your email."
+        )
+
+    else:
+
+        messages.warning(
+            request,
+            "Payment successful, but receipt email could not be sent."
+        )
+
+    # =====================================================
+    # HOME
+    # =====================================================
+
+    return redirect(
+        "home"
+    )
+
+
+# =========================================================
+# PAYMENT CONFIRMATION BUTTON
+# =========================================================
+
+def payment_confirmation(request, booking_id):
+
+    if request.method != "POST":
+
+        return redirect(
+            "online_payment",
+            booking_id=booking_id
+        )
+
+    booking_obj = get_customer_booking(
+        request,
+        booking_id
+    )
+
+    if booking_obj is None:
+
+        messages.error(
+            request,
+            "You are not authorized to access this booking."
+        )
+
+        return redirect(
+            "my_bookings"
+        )
+
+    # =====================================================
+    # CUSTOMER CONFIRMATION
+    # =====================================================
+
+    return redirect(
+        "online_payment_success",
+        booking_id=booking_id
+    )
+
+
+# =========================================================
+# PAYMENT STATUS API
+# =========================================================
+
+def payment_status(request, booking_id):
+
+    booking_obj = get_customer_booking(
+        request,
+        booking_id
+    )
+
+    if booking_obj is None:
+
+        return JsonResponse(
+
+            {
+                "success": False,
+
+                "error": "Unauthorized"
+            },
+
+            status=403
+        )
+
+    return JsonResponse(
+
+        {
+            "success": True,
+
+            "booking_id": booking_obj.id,
+
+            "payment_method":
+                booking_obj.payment_method,
+
+            "payment_status":
+                booking_obj.payment_status,
+
+            "amount":
+                booking_obj.amount,
+        }
+    )
+
+
+# =========================================================
+# CUSTOMER PROFESSIONAL HTML RECEIPT EMAIL
+# =========================================================
+
+def send_booking_receipt(booking_obj):
 
     try:
 
-        response = requests.get(
+        # =====================================================
+        # PAYMENT STATUS
+        # =====================================================
 
-            settings.CASHFREE_BASE_URL
-            + f"/orders/{order_id}/payments",
+        if booking_obj.payment_status == "Success":
 
-            headers=headers,
+            payment_status_text = (
+                "ONLINE PAYMENT SUCCESSFUL"
+            )
 
-            timeout=30
+            payment_status_color = "#198754"
+
+            payment_status_bg = "#e8f7ee"
+
+            payment_icon = "✓"
+
+        elif booking_obj.payment_status == "Cash":
+
+            payment_status_text = (
+                "CASH PAYMENT"
+            )
+
+            payment_status_color = "#198754"
+
+            payment_status_bg = "#e8f7ee"
+
+            payment_icon = "✓"
+
+        else:
+
+            payment_status_text = (
+                "PAYMENT PENDING"
+            )
+
+            payment_status_color = "#f59e0b"
+
+            payment_status_bg = "#fff7e6"
+
+            payment_icon = "!"
+
+        # =====================================================
+        # SAFE DATA
+        # =====================================================
+
+        customer_name = escape(
+            str(booking_obj.name)
         )
 
-    except Exception as e:
-
-        print(
-            "CASHFREE STATUS ERROR:",
-            e
+        customer_email = escape(
+            str(booking_obj.email)
         )
 
-        return None
-
-    if response.status_code != 200:
-
-        print(
-            "CASHFREE STATUS RESPONSE:",
-            response.text
+        customer_mobile = escape(
+            str(booking_obj.mobile)
         )
 
-        return None
+        ball_type = escape(
+            str(booking_obj.ball_type)
+        )
 
-    try:
+        booking_time = escape(
+            str(booking_obj.time)
+        )
 
-        payments = response.json()
+        payment_method = escape(
+            str(booking_obj.payment_method)
+        )
 
-    except Exception:
+        booking_date = booking_obj.date.strftime(
+            "%d %b %Y"
+        )
 
-        return None
+        amount = f"₹{booking_obj.amount}"
 
-    if not isinstance(
-        payments,
-        list
-    ):
+        booking_id = f"#{booking_obj.id}"
 
-        return None
+        # =====================================================
+        # SUBJECT
+        # =====================================================
 
-    # ========================================================
-    # SUCCESS
-    # ========================================================
+        subject = (
+            f"7 Cricket Zone - "
+            f"Booking Receipt {booking_id}"
+        )
 
-    for payment in payments:
+        # =====================================================
+        # PLAIN TEXT EMAIL
+        # =====================================================
 
-        if payment.get(
-            "payment_status"
-        ) == "SUCCESS":
+        text_message = f"""
 
-            return "SUCCESS"
+Hello {customer_name},
 
-    # ========================================================
-    # PENDING
-    # ========================================================
+Thank you for booking with 7 Cricket Zone.
 
-    for payment in payments:
-
-        if payment.get(
-            "payment_status"
-        ) == "PENDING":
-
-            return "PENDING"
-
-    # ========================================================
-    # FAILED
-    # ========================================================
-
-    return "FAILED"
-
-
-# ============================================================
-# SEND BOOKING RECEIPT
-# ============================================================
-
-def send_booking_receipt(
-    booking
-):
-
-    owner_email = getattr(
-        settings,
-        "OWNER_EMAIL",
-        None
-    )
-
-    subject = (
-        f"7 Cricket Zone - "
-        f"Booking Confirmed #{booking.id}"
-    )
-
-    text_content = f"""
 7 CRICKET ZONE
 BOOKING RECEIPT
 
-Booking ID: #{booking.id}
+----------------------------------------
 
-Customer: {booking.name}
+Booking ID      : {booking_id}
 
-Email: {booking.email}
+CUSTOMER DETAILS
 
-Mobile: {booking.mobile}
+Name            : {customer_name}
+Email           : {customer_email}
+Mobile          : {customer_mobile}
 
-Date: {booking.date}
+BOOKING DETAILS
 
-Time: {booking.time.strftime("%I:%M %p")}
+Date            : {booking_date}
+Time            : {booking_time}
+Ball Type       : {ball_type}
+Overs           : {booking_obj.overs}
 
-Ball: {booking.ball_type}
+PAYMENT DETAILS
 
-Overs: {booking.overs}
+Amount          : {amount}
+Payment Method  : {payment_method}
+Payment Status  : {payment_status_text}
 
-Amount: ₹{booking.amount}
+----------------------------------------
 
-Payment Status: SUCCESS
+IMPORTANT NOTES
 
-Thank you for booking with 7 Cricket Zone.
+Please arrive on time for your booking.
+Carry your booking receipt with you.
+Receipt is valid for the booked slot only.
+
+Thank you for choosing 7 Cricket Zone.
+
+Your Game, Our Passion 🏏
+
+7 Cricket Zone
+
+This is an automated receipt.
+
 """
 
-    html_content = f"""
+        # =====================================================
+        # HTML EMAIL
+        # =====================================================
+
+        html_message = f"""
+
 <!DOCTYPE html>
 
 <html>
@@ -745,458 +851,1528 @@ Thank you for booking with 7 Cricket Zone.
 
 <meta charset="UTF-8">
 
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+7 Cricket Zone Booking Receipt
+</title>
+
 </head>
 
-<body style="
-font-family:Arial;
-background:#f5f5f5;
-padding:30px;
-">
 
-<div style="
-max-width:600px;
-margin:auto;
-background:white;
-padding:30px;
-border-radius:15px;
-">
+<body
+style="
+margin:0;
+padding:0;
+background:#eef1f7;
+font-family:Arial,Helvetica,sans-serif;
+color:#172033;
+"
+>
 
-<h2 style="color:#198754;">
-🏏 7 Cricket Zone
-</h2>
 
-<h3>
-Booking Confirmed
-</h3>
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+border="0"
+style="
+background:#eef1f7;
+padding:30px 10px;
+"
+>
 
-<hr>
+<tr>
 
-<p>
-<b>Booking ID:</b>
-#{booking.id}
-</p>
+<td align="center">
 
-<p>
-<b>Customer:</b>
-{booking.name}
-</p>
 
-<p>
-<b>Email:</b>
-{booking.email}
-</p>
+<!-- =====================================================
+     MAIN CONTAINER
+===================================================== -->
 
-<p>
-<b>Mobile:</b>
-{booking.mobile}
-</p>
+<table
+width="680"
+cellspacing="0"
+cellpadding="0"
+border="0"
+style="
+max-width:680px;
+width:100%;
+background:#ffffff;
+border-radius:18px;
+overflow:hidden;
+"
+>
 
-<p>
-<b>Date:</b>
-{booking.date}
-</p>
 
-<p>
-<b>Time:</b>
-{booking.time.strftime("%I:%M %p")}
-</p>
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
-<p>
-<b>Ball:</b>
-{booking.ball_type}
-</p>
+<tr>
 
-<p>
-<b>Overs:</b>
-{booking.overs}
-</p>
+<td
+style="
+background:#061a32;
+padding:35px 20px 30px;
+text-align:center;
+border-bottom:5px solid #f5b82e;
+"
+>
 
-<p>
-<b>Amount:</b>
-₹{booking.amount}
-</p>
+<div
+style="
+font-size:32px;
+font-weight:900;
+letter-spacing:2px;
+color:#f5b82e;
+"
+>
+7 CRICKET ZONE
+</div>
 
-<p style="
-background:#d1e7dd;
+
+<div
+style="
+font-size:22px;
+font-weight:700;
+letter-spacing:3px;
+color:#ffffff;
+margin-top:8px;
+"
+>
+BOOKING RECEIPT
+</div>
+
+
+<div
+style="
+font-size:14px;
+color:#dbe4f0;
+margin-top:12px;
+"
+>
+Thank you for choosing 7 Cricket Zone 🏏
+</div>
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     TOP BOOKING SUMMARY
+===================================================== -->
+
+<tr>
+
+<td
+style="
+padding:25px 25px 10px;
+"
+>
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+border="0"
+style="
+background:#061a32;
+border-radius:14px;
+"
+>
+
+<tr>
+
+
+<!-- BOOKING ID -->
+
+<td
+width="33%"
+align="center"
+style="
+padding:20px 8px;
+border-right:1px solid #40546d;
+"
+>
+
+<div
+style="
+font-size:12px;
+color:#b9c7d9;
+"
+>
+BOOKING ID
+</div>
+
+
+<div
+style="
+font-size:25px;
+font-weight:900;
+color:#f5b82e;
+margin-top:6px;
+"
+>
+{booking_id}
+</div>
+
+</td>
+
+
+<!-- DATE -->
+
+<td
+width="33%"
+align="center"
+style="
+padding:20px 8px;
+border-right:1px solid #40546d;
+"
+>
+
+<div
+style="
+font-size:12px;
+color:#b9c7d9;
+"
+>
+BOOKING DATE
+</div>
+
+
+<div
+style="
+font-size:16px;
+font-weight:700;
+color:#ffffff;
+margin-top:7px;
+"
+>
+{booking_date}
+</div>
+
+</td>
+
+
+<!-- TIME -->
+
+<td
+width="33%"
+align="center"
+style="
+padding:20px 8px;
+"
+>
+
+<div
+style="
+font-size:12px;
+color:#b9c7d9;
+"
+>
+BOOKING TIME
+</div>
+
+
+<div
+style="
+font-size:16px;
+font-weight:700;
+color:#ffffff;
+margin-top:7px;
+"
+>
+{booking_time}
+</div>
+
+</td>
+
+
+</tr>
+
+</table>
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     CONTENT
+===================================================== -->
+
+<tr>
+
+<td
+style="
+padding:15px 25px 25px;
+"
+>
+
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+border="0"
+>
+
+<tr>
+
+
+<!-- =====================================================
+     LEFT COLUMN
+===================================================== -->
+
+<td
+width="50%"
+valign="top"
+style="
+padding-right:8px;
+"
+>
+
+
+<!-- =====================================================
+     CUSTOMER DETAILS
+===================================================== -->
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+border="0"
+style="
+border:1px solid #dfe4eb;
+border-radius:12px;
+margin-bottom:15px;
+"
+>
+
+<tr>
+
+<td
+style="
+background:#0b2a4a;
+color:#ffffff;
+padding:14px;
+font-size:15px;
+font-weight:800;
+"
+>
+👤 &nbsp; CUSTOMER DETAILS
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
 padding:12px;
-border-radius:8px;
-color:#0f5132;
-">
+"
+>
 
-<b>
-Payment Status: SUCCESS
-</b>
+<table
+width="100%"
+cellspacing="0"
+cellpadding="6"
+border="0"
+>
 
-</p>
 
-<p>
-Thank you for booking with
-<b>7 Cricket Zone</b>.
-</p>
+<tr>
+
+<td
+style="
+font-size:13px;
+color:#687386;
+"
+>
+Name
+</td>
+
+
+<td
+align="right"
+style="
+font-size:13px;
+font-weight:700;
+"
+>
+{customer_name}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+font-size:13px;
+color:#687386;
+"
+>
+Email
+</td>
+
+
+<td
+align="right"
+style="
+font-size:12px;
+font-weight:600;
+color:#1769e0;
+word-break:break-all;
+"
+>
+{customer_email}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+font-size:13px;
+color:#687386;
+"
+>
+Mobile
+</td>
+
+
+<td
+align="right"
+style="
+font-size:13px;
+font-weight:700;
+"
+>
+{customer_mobile}
+</td>
+
+</tr>
+
+
+</table>
+
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- =====================================================
+     BOOKING DETAILS
+===================================================== -->
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+border="0"
+style="
+border:1px solid #dfe4eb;
+border-radius:12px;
+margin-bottom:15px;
+"
+>
+
+<tr>
+
+<td
+style="
+background:#0b2a4a;
+color:#ffffff;
+padding:14px;
+font-size:15px;
+font-weight:800;
+"
+>
+🏏 &nbsp; BOOKING DETAILS
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+padding:12px;
+"
+>
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="6"
+border="0"
+>
+
+
+<tr>
+
+<td
+style="
+font-size:13px;
+color:#687386;
+"
+>
+Date
+</td>
+
+
+<td
+align="right"
+style="
+font-size:13px;
+font-weight:700;
+"
+>
+{booking_date}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+font-size:13px;
+color:#687386;
+"
+>
+Time
+</td>
+
+
+<td
+align="right"
+style="
+font-size:13px;
+font-weight:700;
+"
+>
+{booking_time}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+font-size:13px;
+color:#687386;
+"
+>
+Ball Type
+</td>
+
+
+<td
+align="right"
+style="
+font-size:13px;
+font-weight:700;
+"
+>
+{ball_type}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+font-size:13px;
+color:#687386;
+"
+>
+Overs
+</td>
+
+
+<td
+align="right"
+style="
+font-size:13px;
+font-weight:700;
+"
+>
+{booking_obj.overs}
+</td>
+
+</tr>
+
+
+</table>
+
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- =====================================================
+     PAYMENT SUMMARY
+===================================================== -->
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+border="0"
+style="
+border:1px solid #dfe4eb;
+border-radius:12px;
+"
+>
+
+<tr>
+
+<td
+style="
+background:#0b2a4a;
+color:#ffffff;
+padding:14px;
+font-size:15px;
+font-weight:800;
+"
+>
+₹ &nbsp; PAYMENT SUMMARY
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+padding:12px;
+"
+>
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="7"
+border="0"
+>
+
+
+<tr>
+
+<td
+style="
+font-size:14px;
+font-weight:700;
+"
+>
+Amount
+</td>
+
+
+<td
+align="right"
+style="
+font-size:22px;
+font-weight:900;
+color:#e7a91e;
+"
+>
+{amount}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+border-top:1px dashed #cfd5dd;
+padding-top:12px;
+font-size:13px;
+color:#687386;
+"
+>
+Payment Method
+</td>
+
+
+<td
+align="right"
+style="
+border-top:1px dashed #cfd5dd;
+padding-top:12px;
+font-size:13px;
+font-weight:700;
+"
+>
+{payment_method}
+</td>
+
+</tr>
+
+
+<tr>
+
+<td
+style="
+font-size:13px;
+color:#687386;
+"
+>
+Payment Status
+</td>
+
+
+<td
+align="right"
+>
+
+<span
+style="
+display:inline-block;
+background:{payment_status_bg};
+border:1px solid {payment_status_color};
+color:{payment_status_color};
+padding:7px 9px;
+border-radius:20px;
+font-size:10px;
+font-weight:900;
+"
+>
+
+{payment_icon}
+
+&nbsp;
+
+{payment_status_text}
+
+</span>
+
+</td>
+
+</tr>
+
+
+</table>
+
+</td>
+
+</tr>
+
+</table>
+
+
+</td>
+
+
+<!-- =====================================================
+     RIGHT COLUMN
+===================================================== -->
+
+<td
+width="50%"
+valign="top"
+style="
+padding-left:8px;
+"
+>
+
+
+<!-- =====================================================
+     PAYMENT STATUS
+===================================================== -->
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+border="0"
+style="
+border:1px solid #dfe4eb;
+border-radius:12px;
+margin-bottom:15px;
+"
+>
+
+<tr>
+
+<td
+align="center"
+style="
+padding:30px 15px;
+"
+>
+
+
+<div
+style="
+width:65px;
+height:65px;
+line-height:65px;
+margin:auto;
+border-radius:50%;
+background:#198754;
+color:#ffffff;
+font-size:38px;
+font-weight:bold;
+"
+>
+{payment_icon}
+</div>
+
+
+<div
+style="
+margin-top:16px;
+font-size:18px;
+font-weight:900;
+color:{payment_status_color};
+"
+>
+{payment_status_text}
+</div>
+
+
+<div
+style="
+margin-top:8px;
+font-size:12px;
+line-height:20px;
+color:#687386;
+"
+>
+Your booking payment status has been
+updated successfully.
+</div>
+
+
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- =====================================================
+     IMPORTANT NOTES
+===================================================== -->
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+border="0"
+style="
+background:#f1f5fb;
+border-radius:12px;
+margin-bottom:15px;
+"
+>
+
+<tr>
+
+<td
+style="
+padding:18px;
+"
+>
+
+
+<div
+style="
+font-size:15px;
+font-weight:900;
+color:#0b2a4a;
+margin-bottom:10px;
+"
+>
+ⓘ &nbsp; IMPORTANT NOTES
+</div>
+
+
+<div
+style="
+font-size:12px;
+line-height:24px;
+color:#334155;
+"
+>
+
+✓ Please arrive on time for your booking.<br>
+
+✓ Carry your booking receipt with you.<br>
+
+✓ Receipt is valid for the booked slot only.<br>
+
+✓ For any query, contact 7 Cricket Zone.
 
 </div>
+
+
+</td>
+
+</tr>
+
+</table>
+
+
+<!-- =====================================================
+     NEED HELP
+===================================================== -->
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+border="0"
+style="
+background:#061a32;
+border-radius:12px;
+"
+>
+
+<tr>
+
+<td
+align="center"
+style="
+padding:23px 12px;
+"
+>
+
+
+<div
+style="
+font-size:18px;
+font-weight:900;
+color:#f5b82e;
+"
+>
+☎ NEED HELP?
+</div>
+
+
+<div
+style="
+margin-top:9px;
+font-size:12px;
+color:#ffffff;
+"
+>
+We're always here to assist you.
+</div>
+
+
+<div
+style="
+margin-top:8px;
+font-size:12px;
+color:#b9c7d9;
+"
+>
+Contact 7 Cricket Zone for assistance.
+</div>
+
+
+</td>
+
+</tr>
+
+</table>
+
+
+</td>
+
+</tr>
+
+</table>
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     THANK YOU
+===================================================== -->
+
+<tr>
+
+<td
+style="
+padding:0 25px 25px;
+"
+>
+
+<table
+width="100%"
+cellspacing="0"
+cellpadding="0"
+border="0"
+style="
+background:#f3f6fb;
+border:1px solid #e0e6ef;
+border-radius:12px;
+"
+>
+
+<tr>
+
+<td
+align="center"
+style="
+padding:22px;
+"
+>
+
+
+<div
+style="
+font-size:25px;
+font-weight:900;
+font-style:italic;
+color:#e7a91e;
+"
+>
+Thank You!
+</div>
+
+
+<div
+style="
+margin-top:7px;
+font-size:14px;
+color:#26364d;
+line-height:22px;
+"
+>
+We truly appreciate your trust in
+<strong>7 Cricket Zone</strong>.
+</div>
+
+
+<div
+style="
+margin-top:5px;
+font-size:13px;
+color:#687386;
+"
+>
+Keep playing, keep cheering! 🏏
+</div>
+
+
+</td>
+
+</tr>
+
+</table>
+
+</td>
+
+</tr>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<tr>
+
+<td
+style="
+background:#061a32;
+padding:25px;
+text-align:center;
+border-top:4px solid #f5b82e;
+"
+>
+
+
+<div
+style="
+font-size:19px;
+font-weight:900;
+color:#f5b82e;
+letter-spacing:1px;
+"
+>
+7 CRICKET ZONE
+</div>
+
+
+<div
+style="
+margin-top:7px;
+font-size:13px;
+color:#ffffff;
+"
+>
+Your Game, Our Passion 🏏
+</div>
+
+
+<div
+style="
+margin-top:10px;
+font-size:11px;
+color:#aebed0;
+"
+>
+Thank you for booking with us.
+</div>
+
+
+</td>
+
+</tr>
+
+
+</table>
+
+</td>
+
+</tr>
+
+</table>
+
 
 </body>
 
 </html>
+
 """
 
-    recipients = [
-        booking.email
-    ]
+        # =====================================================
+        # SEND CUSTOMER EMAIL
+        # =====================================================
 
-    if owner_email:
-
-        recipients.append(
-            owner_email
+        print(
+            "CUSTOMER EMAIL:",
+            booking_obj.email
         )
 
-    email = EmailMultiAlternatives(
-
-        subject=subject,
-
-        body=text_content,
-
-        from_email=settings.DEFAULT_FROM_EMAIL,
-
-        to=recipients
-    )
-
-    email.attach_alternative(
-        html_content,
-        "text/html"
-    )
-
-    email.send(
-        fail_silently=False
-    )
-
-
-# ============================================================
-# PAYMENT RETURN
-# ============================================================
-
-def payment_return(request):
-
-    booking_id = request.GET.get(
-        "booking_id"
-    )
-
-    order_id = request.GET.get(
-        "order_id"
-    )
-
-    if not booking_id:
-
-        return redirect(
-            "home"
+        print(
+            "FROM EMAIL:",
+            settings.DEFAULT_FROM_EMAIL
         )
 
-    booking = get_object_or_404(
-        Booking,
-        id=booking_id
-    )
+        email_message = EmailMultiAlternatives(
 
-    # ========================================================
-    # ORDER ID
-    # ========================================================
+            subject=subject,
 
-    if not order_id:
+            body=text_message,
 
-        order_id = (
-            booking.cashfree_order_id
+            from_email=settings.DEFAULT_FROM_EMAIL,
+
+            to=[
+                booking_obj.email
+            ],
         )
 
-    if not order_id:
-
-        return render(
-            request,
-            "payment_failed.html",
-            {
-                "booking": booking,
-                "error":
-                    "Cashfree order ID not found."
-            }
+        email_message.attach_alternative(
+            html_message,
+            "text/html"
         )
 
-    # ========================================================
-    # VERIFY PAYMENT
-    # ========================================================
-
-    status = get_cashfree_payment_status(
-        order_id
-    )
-
-    # ========================================================
-    # SUCCESS
-    # ========================================================
-
-    if status == "SUCCESS":
-
-        if booking.payment_status != "Success":
-
-            booking.payment_status = (
-                "Success"
-            )
-
-            booking.save(
-                update_fields=[
-                    "payment_status"
-                ]
-            )
-
-            try:
-
-                send_booking_receipt(
-                    booking
-                )
-
-            except Exception as e:
-
-                print(
-                    "EMAIL ERROR:",
-                    e
-                )
-
-        return redirect(
-            "payment_success",
-            booking_id=booking.id
+        email_message.send(
+            fail_silently=False
         )
 
-    # ========================================================
-    # PENDING
-    # ========================================================
-
-    if status == "PENDING":
-
-        return render(
-            request,
-            "payment_pending.html",
-            {
-                "booking": booking
-            }
+        print(
+            "CUSTOMER HTML RECEIPT SENT:",
+            booking_obj.email
         )
 
-    # ========================================================
-    # FAILED
-    # ========================================================
-
-    booking.payment_status = (
-        "Failed"
-    )
-
-    booking.save(
-        update_fields=[
-            "payment_status"
-        ]
-    )
-
-    return render(
-        request,
-        "payment_failed.html",
-        {
-            "booking": booking
-        }
-    )
-
-
-# ============================================================
-# PAYMENT SUCCESS
-# ============================================================
-
-def payment_success(
-    request,
-    booking_id
-):
-
-    booking = get_object_or_404(
-        Booking,
-        id=booking_id
-    )
-
-    if booking.payment_status != "Success":
-
-        return redirect(
-            "home"
-        )
-
-    return render(
-        request,
-        "payment_success.html",
-        {
-            "booking": booking
-        }
-    )
-
-
-# ============================================================
-# CASHFREE WEBHOOK
-# ============================================================
-
-@csrf_exempt
-@require_POST
-def cashfree_webhook(request):
-
-    try:
-
-        raw_body = request.body
-
-        signature = request.headers.get(
-            "x-webhook-signature"
-        )
-
-        timestamp = request.headers.get(
-            "x-webhook-timestamp"
-        )
-
-        # ====================================================
-        # SIGNATURE CHECK
-        # ====================================================
-
-        if not signature or not timestamp:
-
-            return HttpResponse(
-                "Missing signature",
-                status=400
-            )
-
-        signed_payload = (
-            timestamp.encode()
-            + raw_body
-        )
-
-        expected_signature = (
-            base64.b64encode(
-                hmac.new(
-                    settings.CASHFREE_CLIENT_SECRET.encode(),
-                    signed_payload,
-                    hashlib.sha256
-                ).digest()
-            ).decode()
-        )
-
-        if not hmac.compare_digest(
-            signature,
-            expected_signature
-        ):
-
-            return HttpResponse(
-                "Invalid signature",
-                status=401
-            )
-
-        # ====================================================
-        # JSON
-        # ====================================================
-
-        data = json.loads(
-            raw_body
-        )
-
-        # ====================================================
-        # ORDER ID
-        # ====================================================
-
-        order_id = (
-            data.get(
-                "data",
-                {}
-            )
-            .get(
-                "order",
-                {}
-            )
-            .get(
-                "order_id"
-            )
-        )
-
-        # ====================================================
-        # PAYMENT STATUS
-        # ====================================================
-
-        payment_status = (
-            data.get(
-                "data",
-                {}
-            )
-            .get(
-                "payment",
-                {}
-            )
-            .get(
-                "payment_status"
-            )
-        )
-
-        if not order_id:
-
-            return HttpResponse(
-                "No order id",
-                status=400
-            )
-
-        # ====================================================
-        # BOOKING
-        # ====================================================
-
-        try:
-
-            booking = Booking.objects.get(
-                cashfree_order_id=order_id
-            )
-
-        except Booking.DoesNotExist:
-
-            return HttpResponse(
-                "Booking not found",
-                status=404
-            )
-
-        # ====================================================
-        # SUCCESS ONLY
-        # ====================================================
-
-        if payment_status == "SUCCESS":
-
-            if booking.payment_status != "Success":
-
-                booking.payment_status = (
-                    "Success"
-                )
-
-                booking.save(
-                    update_fields=[
-                        "payment_status"
-                    ]
-                )
-
-                try:
-
-                    send_booking_receipt(
-                        booking
-                    )
-
-                except Exception as e:
-
-                    print(
-                        "WEBHOOK EMAIL ERROR:",
-                        e
-                    )
-
-        return HttpResponse(
-            "OK",
-            status=200
-        )
+        return True
 
     except Exception as e:
 
         print(
-            "WEBHOOK ERROR:",
-            e
+            "CUSTOMER EMAIL ERROR:",
+            repr(e)
         )
 
-        return HttpResponse(
-            "Webhook error",
-            status=500
+        return False
+
+
+# =========================================================
+# OWNER NOTIFICATION
+# =========================================================
+
+def send_owner_notification(booking_obj):
+
+    subject = (
+        f"NEW BOOKING - "
+        f"7 Cricket Zone #{booking_obj.id}"
+    )
+
+    # =====================================================
+    # PAYMENT STATUS
+    # =====================================================
+
+    if booking_obj.payment_status == "Success":
+
+        payment_status_text = (
+            "Online Payment Successful"
         )
+
+    else:
+
+        payment_status_text = (
+            booking_obj.payment_status
+        )
+
+    # =====================================================
+    # OWNER EMAIL
+    # =====================================================
+
+    message = f"""
+
+Hello Owner,
+
+A new booking has been received.
+
+========================================
+
+             NEW BOOKING
+
+========================================
+
+Booking ID       : #{booking_obj.id}
+
+
+CUSTOMER DETAILS
+
+----------------------------------------
+
+Name             : {booking_obj.name}
+
+Email            : {booking_obj.email}
+
+Mobile           : {booking_obj.mobile}
+
+
+BOOKING DETAILS
+
+----------------------------------------
+
+Date             : {booking_obj.date}
+
+Time             : {booking_obj.time}
+
+Ball Type        : {booking_obj.ball_type}
+
+Overs            : {booking_obj.overs}
+
+
+PAYMENT DETAILS
+
+----------------------------------------
+
+Amount           : ₹{booking_obj.amount}
+
+Payment Method   : {booking_obj.payment_method}
+
+Payment Status   : {payment_status_text}
+
+
+========================================
+
+Please check Django Admin.
+
+7 Cricket Zone
+
+"""
+
+    try:
+
+        send_mail(
+
+            subject=subject,
+
+            message=message,
+
+            from_email=settings.DEFAULT_FROM_EMAIL,
+
+            recipient_list=[
+                settings.OWNER_EMAIL
+            ],
+
+            fail_silently=False
+        )
+
+        print(
+            "OWNER NOTIFICATION SENT:",
+            settings.OWNER_EMAIL
+        )
+
+        return True
+
+    except Exception as e:
+
+        print(
+            "OWNER EMAIL ERROR:",
+            repr(e)
+        )
+
+        return False
+
+
+# =========================================================
+# SEND CUSTOMER + OWNER EMAILS
+# =========================================================
+
+def send_booking_emails(booking_obj):
+
+    # Customer email first
+    customer_sent = send_booking_receipt(
+        booking_obj
+    )
+
+    # Owner email
+    owner_sent = send_owner_notification(
+        booking_obj
+    )
+
+    return (
+        customer_sent,
+        owner_sent
+    )
+
+
+# =========================================================
+# CASH PAYMENT
+# =========================================================
+
+def cash_payment(request, booking_id):
+
+    if request.method != "POST":
+
+        return redirect(
+            "payment_options",
+            booking_id=booking_id
+        )
+
+    booking_obj = get_customer_booking(
+        request,
+        booking_id
+    )
+
+    if booking_obj is None:
+
+        messages.error(
+            request,
+            "You are not authorized to access this booking."
+        )
+
+        return redirect(
+            "my_bookings"
+        )
+
+    # =====================================================
+    # CASH PAYMENT
+    # =====================================================
+
+    booking_obj.payment_method = "Cash"
+
+    booking_obj.payment_status = "Cash"
+
+    booking_obj.save(
+        update_fields=[
+            "payment_method",
+            "payment_status"
+        ]
+    )
+
+    # =====================================================
+    # SEND EMAILS
+    # =====================================================
+
+    customer_sent, owner_sent = send_booking_emails(
+        booking_obj
+    )
+
+    # =====================================================
+    # MESSAGE
+    # =====================================================
+
+    if customer_sent:
+
+        messages.success(
+            request,
+            "Cash booking confirmed! Receipt sent to your email."
+        )
+
+    else:
+
+        messages.warning(
+            request,
+            "Cash booking confirmed, but customer receipt email could not be sent."
+        )
+
+    return redirect(
+        "home"
+    )
+
+
+# =========================================================
+# AVAILABLE SLOTS API
+# =========================================================
+
+def api_slots(request):
+
+    selected_date = request.GET.get(
+        "date",
+        ""
+    ).strip()
+
+    if not selected_date:
+
+        return JsonResponse(
+            {
+                "date": "",
+
+                "booked_slots": [],
+            }
+        )
+
+    # =====================================================
+    # DATE VALIDATION
+    # =====================================================
+
+    try:
+
+        selected_date_obj = datetime.strptime(
+            selected_date,
+            "%Y-%m-%d"
+        ).date()
+
+    except ValueError:
+
+        return JsonResponse(
+
+            {
+                "date": selected_date,
+
+                "booked_slots": [],
+
+                "error": "Invalid date format."
+            },
+
+            status=400
+        )
+
+    # =====================================================
+    # GET BOOKED SLOTS
+    # =====================================================
+
+    booked_slots = list(
+
+        Booking.objects.filter(
+            date=selected_date_obj
+        ).values_list(
+            "time",
+            flat=True
+        )
+    )
+
+    # =====================================================
+    # CLEAN DUPLICATES
+    # =====================================================
+
+    booked_slots = list(
+
+        dict.fromkeys(
+
+            str(slot).strip()
+
+            for slot in booked_slots
+
+            if slot
+        )
+    )
+
+    # =====================================================
+    # RESPONSE
+    # =====================================================
+
+    return JsonResponse(
+
+        {
+            "date": selected_date,
+
+            "booked_slots": booked_slots,
+        }
+    )
+
+
+# =========================================================
+# MY BOOKINGS
+# =========================================================
+
+def my_bookings(request):
+
+    customer_email = request.session.get(
+        "customer_email"
+    )
+
+    customer_mobile = request.session.get(
+        "customer_mobile"
+    )
+
+    if not customer_email or not customer_mobile:
+
+        messages.warning(
+            request,
+            "Please book a slot first."
+        )
+
+        return redirect(
+            "booking"
+        )
+
+    bookings = Booking.objects.filter(
+
+        email=customer_email,
+
+        mobile=customer_mobile
+
+    ).order_by(
+        "-created_at"
+    )
+
+    return render(
+
+        request,
+
+        "my_bookings.html",
+
+        {
+            "bookings": bookings
+        }
+    )
